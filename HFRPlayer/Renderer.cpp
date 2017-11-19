@@ -92,10 +92,16 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	
 	Vertex vertices [] =
 	{ 
-	  Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
-	  Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
-	  Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
-	  Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
+	  //Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
+	  //Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
+	  //Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
+	  //Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
+
+		//GL UVs ORDERING
+		Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
+		Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
+		Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,0)),
+		Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 1))
 	};
 
 	Mesh* mesh = new Mesh();
@@ -106,10 +112,11 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 
 	//Model* model = new Model(sp, mesh);
 	GLuint texID = GLTextureLoader::LoadTexture("c:/Zapas/text.png");
+	GLuint texID2 = GLTextureLoader::LoadTexture("c:/Zapas/text2.png");
 	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0");
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,texID);
+	glBindTexture(GL_TEXTURE_2D,texID2);
 
 	//render loop
 	bool was = true;
@@ -117,18 +124,25 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	{	
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0, 0, 0, 1);
+		
+
+		sp->SetAsCurrent();//Shader
+
+		
 		if (was)
 		{
 			//glClearColor(1, 0, 0, 1);
+			glBindTexture(GL_TEXTURE_2D, texID);
+
 			was = false;
 		}
 		else
 		{
 			//glClearColor(0, 1, 0, 1);
+			glBindTexture(GL_TEXTURE_2D, texID2);
 			was = true;
 		}
 
-		sp->SetAsCurrent();
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 
