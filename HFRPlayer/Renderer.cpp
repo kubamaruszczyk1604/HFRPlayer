@@ -84,9 +84,9 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	std::vector<Vertex> vertices;
 
 	vertices.push_back(Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
-	vertices.push_back(Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
-	vertices.push_back(Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
-	vertices.push_back(Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
+	vertices.push_back(Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)));
+	vertices.push_back(Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)));
+	vertices.push_back(Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0)));
 
 	std::vector<int> indices;
 	indices.push_back(0);
@@ -114,14 +114,15 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 		//time += 0.01f;
 		//glClearColor(abs(sin(time)), abs(cos(time)), 0, 1);
 		//fr test
+		glClearColor(0, 0, 0, 1);
 		if (was)
 		{
-			glClearColor(1, 0, 0, 1);
+			//glClearColor(1, 0, 0, 1);
 			was = false;
 		}
 		else
 		{
-			glClearColor(0, 1, 0, 1);
+			//glClearColor(0, 1, 0, 1);
 			was = true;
 		}
 		sp->SetAsCurrent();
