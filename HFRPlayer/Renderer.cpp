@@ -1,10 +1,12 @@
 #include "Renderer.h"
 #include "Model.h"
-#include "GLTextureLoader.h"
+
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
+unsigned Renderer::s_CurrentIndex{ 0 };
+
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -34,6 +36,11 @@ void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int pr
 
 void Renderer::SetPictures(GLuint * IDs, int count)
 {
+}
+
+void Renderer::SetPictures(std::vector<GLuint>& IDs)
+{
+	s_Pictures = IDs;
 }
 
 void Renderer::SetFPS(float fps)
@@ -111,12 +118,12 @@ void Renderer::Run()
 	mesh->CreateIndexBuffer(indices, 6);
 
 	//Model* model = new Model(sp, mesh);
-	GLuint texID = GLTextureLoader::LoadTexture("c:/Zapas/text.png");
-	GLuint texID2 = GLTextureLoader::LoadTexture("c:/Zapas/text2.png");
-	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0");
+	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texID2);
+	//glBindTexture(GL_TEXTURE_2D, texID2);
+
+	unsigned sizeCached = s_Pictures.size();
 
 	//render loop
 	bool was = true;
@@ -127,22 +134,10 @@ void Renderer::Run()
 
 
 		sp->SetAsCurrent();//Shader
-
-
-		if (was)
-		{
-			//glClearColor(1, 0, 0, 1);
-			glBindTexture(GL_TEXTURE_2D, texID);
-
-			was = false;
-		}
-		else
-		{
-			//glClearColor(0, 1, 0, 1);
-			glBindTexture(GL_TEXTURE_2D, texID2);
-			was = true;
-		}
-
+		s_CurrentIndex++;
+		if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
+		glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
+		
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 

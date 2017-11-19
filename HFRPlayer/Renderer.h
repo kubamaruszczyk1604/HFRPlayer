@@ -3,6 +3,7 @@
 #include "Model.h"
 #include <string>
 #include <vector>
+#include "GLTextureLoader.h"
 
 class Renderer
 {
@@ -18,9 +19,11 @@ private:
 	static bool s_Running;
 
 	static std::vector<GLuint> s_Pictures;
+	static unsigned s_CurrentIndex;
 
 public:
 	static void SetPictures(GLuint* IDs, int count);
+	static void SetPictures(std::vector<GLuint>& IDs);
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
