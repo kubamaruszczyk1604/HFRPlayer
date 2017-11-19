@@ -4,8 +4,7 @@
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 bool Renderer::s_Running{ true };
-std::vector<Model*> Renderer::s_Models;
-
+std::vector<GLuint> Renderer::s_Pictures;
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -32,12 +31,8 @@ void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int pr
 {
 }
 
-void Renderer::AddModel(Model * model)
-{
-	s_Models.push_back(model);
-}
 
-void Renderer::SetTextures(GLuint * IDs, int count)
+void Renderer::SetPictures(GLuint * IDs, int count)
 {
 }
 
@@ -45,7 +40,7 @@ void Renderer::SetFPS(float fps)
 {
 }
 
-bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
+bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 {
 	//Set the error callback  
 	glfwSetErrorCallback(Error_callback);
@@ -87,15 +82,20 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 	
+	
+}
+
+void Renderer::Run()
+{
 	//glEnable(GL_DEPTH_TEST);
 	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
-	
-	Vertex vertices [] =
-	{ 
-	  //Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
-	  //Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
-	  //Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
-	  //Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
+
+	Vertex vertices[] =
+	{
+		//Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
+		//Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
+		//Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
+		//Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
 
 		//GL UVs ORDERING
 		Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
@@ -116,19 +116,19 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0");
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D,texID2);
+	glBindTexture(GL_TEXTURE_2D, texID2);
 
 	//render loop
 	bool was = true;
 	do
-	{	
+	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0, 0, 0, 1);
-		
+
 
 		sp->SetAsCurrent();//Shader
 
-		
+
 		if (was)
 		{
 			//glClearColor(1, 0, 0, 1);
@@ -147,9 +147,8 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 		glfwSwapBuffers(s_GLWindow);
 
 		glfwPollEvents();
-		
-	} 
-	while (!glfwWindowShouldClose(s_GLWindow) && s_Running);
+
+	} while (!glfwWindowShouldClose(s_GLWindow) && s_Running);
 
 
 	glfwDestroyWindow(s_GLWindow);

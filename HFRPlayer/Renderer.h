@@ -17,13 +17,13 @@ private:
 
 	static bool s_Running;
 
-	static std::vector<Model*> s_Models;
+	static std::vector<GLuint> s_Pictures;
 
 public:
-	static void AddModel(Model* model);
-	static void SetTextures(GLuint* IDs, int count);
+	static void SetPictures(GLuint* IDs, int count);
 	static void SetFPS(float fps);
-	static bool Start(int w, int h, std::string title, bool fullScreen = 0);
+	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
+	static void Run();
 	Renderer() = delete;
 	Renderer(const Renderer&) = delete;
 	Renderer& operator=(const Renderer&) = delete;
