@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+#include "Model.h"
+
 class Renderer
 {
 private:
@@ -27,8 +29,12 @@ private:
 
 	static bool s_Running;
 
+	static std::vector<Model*> s_Models;
+
 public:
-	static  bool Start(int w, int h, std::string title, bool fullScreen = 0);
+	static void AddModel(Model* model);
+
+	static bool Start(int w, int h, std::string title, bool fullScreen = 0);
 	Renderer() = delete;
 	~Renderer();
 };

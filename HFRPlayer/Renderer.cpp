@@ -2,6 +2,8 @@
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 bool Renderer::s_Running{ true };
+std::vector<Model*> Renderer::s_Models;
+
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -26,6 +28,11 @@ void Renderer::MousePosChange_callback(GLFWwindow * window, double mouseX, doubl
 
 void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int press_release, int mods)
 {
+}
+
+void Renderer::AddModel(Model * model)
+{
+	s_Models.push_back(model);
 }
 
 bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
