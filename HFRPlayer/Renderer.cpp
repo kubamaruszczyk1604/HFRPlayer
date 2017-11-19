@@ -1,5 +1,5 @@
 #include "Renderer.h"
-
+#include "Model.h"
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 bool Renderer::s_Running{ true };
 std::vector<Model*> Renderer::s_Models;
@@ -81,8 +81,28 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	
 	glEnable(GL_DEPTH_TEST);
 	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
+	std::vector<Vertex> vertices;
 
+	vertices.push_back(Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
+	vertices.push_back(Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
+	vertices.push_back(Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
+	vertices.push_back(Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
 
+	std::vector<int> indices;
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
+
+	indices.push_back(0);
+	indices.push_back(2);
+	indices.push_back(3);
+
+	Mesh* mesh = new Mesh();
+	mesh->Create(&vertices[0], vertices.size());
+	mesh->CreateIndexBuffer(&indices[0], indices.size());
+
+	//Model* model = new Model(sp, mesh);
+   
 
 	//render loop
 	float time = 0;
@@ -104,7 +124,9 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 			glClearColor(0, 1, 0, 1);
 			was = true;
 		}
-
+		sp->SetAsCurrent();
+		//model->GetMesh()->Draw();
+		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...  
@@ -117,6 +139,7 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	glfwDestroyWindow(s_GLWindow);
 	//Finalize and clean up GLFW  
 	glfwTerminate();
+	delete (sp);
 
 }
 
