@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include "Model.h"
+#include "GLTextureLoader.h"
+
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 bool Renderer::s_Running{ true };
 std::vector<Model*> Renderer::s_Models;
@@ -103,7 +105,11 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	mesh->CreateIndexBuffer(indices, 6);
 
 	//Model* model = new Model(sp, mesh);
-   
+	GLuint texID = GLTextureLoader::LoadTexture("c:/Zapas/text.png");
+	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0");
+	glUniform1i(samplerID, 0);//loc, value
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D,texID);
 
 	//render loop
 	bool was = true;

@@ -42,7 +42,6 @@ struct Vertex
 	}
 
 
-
 	void SetXYZ(const glm::vec3& pos)
 	{
 		m_Position = pos;
