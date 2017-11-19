@@ -3,7 +3,6 @@
 #include "Model.h"
 #include <string>
 #include <vector>
-//..\GL\glew\lib\Release\Win32
 
 class Renderer
 {

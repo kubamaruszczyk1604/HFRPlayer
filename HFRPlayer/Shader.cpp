@@ -5,7 +5,7 @@
 #include <sstream>
 #include <fstream>
 
-//#define PRINT_SHADERS
+#define PRINT_SHADERS
 
 Shader::Shader(GLenum type) :m_Id(0)
 {

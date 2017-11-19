@@ -81,25 +81,19 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	
 	glEnable(GL_DEPTH_TEST);
 	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
-	std::vector<Vertex> vertices;
-
-	vertices.push_back(Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)));
-	vertices.push_back(Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)));
-	vertices.push_back(Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)));
-	vertices.push_back(Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0)));
-
-	std::vector<int> indices;
-	indices.push_back(0);
-	indices.push_back(1);
-	indices.push_back(2);
-
-	indices.push_back(0);
-	indices.push_back(2);
-	indices.push_back(3);
+	
+	Vertex vertices [] =
+	{ Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
+	  Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
+	  Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
+	  Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
+	};
 
 	Mesh* mesh = new Mesh();
-	mesh->Create(&vertices[0], vertices.size());
-	mesh->CreateIndexBuffer(&indices[0], indices.size());
+	mesh->Create(vertices, 4);
+
+	int indices[] = { 0,1,2,0,2,3 };
+	mesh->CreateIndexBuffer(indices, 6);
 
 	//Model* model = new Model(sp, mesh);
    
