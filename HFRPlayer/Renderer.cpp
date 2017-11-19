@@ -39,7 +39,7 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 {
 	//Set the error callback  
 	glfwSetErrorCallback(Error_callback);
-	glewExperimental = GL_TRUE;
+    glewExperimental = GL_TRUE;
 	if (!glfwInit())
 	{
 		return false;
@@ -105,15 +105,11 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
    
 
 	//render loop
-	float time = 0;
 	bool was = true;
 	do
 	{
 		
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//time += 0.01f;
-		//glClearColor(abs(sin(time)), abs(cos(time)), 0, 1);
-		//fr test
 		glClearColor(0, 0, 0, 1);
 		if (was)
 		{
@@ -125,22 +121,23 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 			//glClearColor(0, 1, 0, 1);
 			was = true;
 		}
+
 		sp->SetAsCurrent();
-		//model->GetMesh()->Draw();
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 
-		//Get and organize events, like keyboard and mouse input, window resizing, etc...  
 		glfwPollEvents();
 		
-	} //Check if the ESC key had been pressed or if the window had been closed  
+	} 
 	while (!glfwWindowShouldClose(s_GLWindow) && s_Running);
 
-	//Close OpenGL window and terminate GLFW  
+
 	glfwDestroyWindow(s_GLWindow);
-	//Finalize and clean up GLFW  
 	glfwTerminate();
+
+	//clean up
 	delete (sp);
+	delete(mesh);
 
 }
 

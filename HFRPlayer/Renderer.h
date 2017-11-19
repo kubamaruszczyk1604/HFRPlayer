@@ -1,15 +1,9 @@
 #pragma once
-//Include GLEW  
-#include <GL/glew.h>  
-
-//Include GLFW  
-#include <GLFW/glfw3.h>  
-
-
-#include <string>
-#include <vector>
 
 #include "Model.h"
+#include <string>
+#include <vector>
+//..\GL\glew\lib\Release\Win32
 
 class Renderer
 {
