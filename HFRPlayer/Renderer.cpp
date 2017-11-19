@@ -3,9 +3,12 @@
 
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
+
+Stopwatch Renderer::s_Stopwatch;
 bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
+unsigned Renderer::s_FrameCounter{ 0 };
 
 
 void Renderer::Error_callback(int error, const char * description)
@@ -124,7 +127,7 @@ void Renderer::Run()
 	//glBindTexture(GL_TEXTURE_2D, texID2);
 
 	unsigned sizeCached = s_Pictures.size();
-
+	s_Stopwatch.Start();
 	//render loop
 	bool was = true;
 	do
@@ -141,6 +144,14 @@ void Renderer::Run()
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 
+		s_FrameCounter++;
+		if (s_Stopwatch.ElapsedTime() >= 1)
+		{
+			std::cout << "FPS: " << s_FrameCounter << std::endl;
+			s_Stopwatch.Stop();
+			s_FrameCounter = 0;
+			s_Stopwatch.Start();
+		}
 		glfwPollEvents();
 
 	} while (!glfwWindowShouldClose(s_GLWindow) && s_Running);

@@ -1,5 +1,4 @@
-// HFRPlayer.cpp : Defines the entry point for the console application.
-//
+// MAIN ENTRY HERE 
 
 
 #include "Renderer.h"

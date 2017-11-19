@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 #include "GLTextureLoader.h"
-
+#include "Stopwatch.h"
 class Renderer
 {
 private:
@@ -16,10 +16,11 @@ private:
 	static void MousePosChange_callback(GLFWwindow* window, double mouseX, double mouseY);
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
+	static Stopwatch s_Stopwatch;
 	static bool s_Running;
-
 	static std::vector<GLuint> s_Pictures;
 	static unsigned s_CurrentIndex;
+	static unsigned s_FrameCounter;
 
 public:
 	static void SetPictures(GLuint* IDs, int count);
