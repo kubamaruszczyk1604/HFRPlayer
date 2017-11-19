@@ -35,6 +35,14 @@ void Renderer::AddModel(Model * model)
 	s_Models.push_back(model);
 }
 
+void Renderer::SetTextures(GLuint * IDs, int count)
+{
+}
+
+void Renderer::SetFPS(float fps)
+{
+}
+
 bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 {
 	//Set the error callback  
@@ -69,21 +77,20 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 
 	//Initialize GLEW  
 	GLenum err = glewInit();
-
-	//If GLEW hasn't initialized  
 	if (err != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		return -1;
 	}
-	//Set the key callback  
+
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 	
-	glEnable(GL_DEPTH_TEST);
+	//glEnable(GL_DEPTH_TEST);
 	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
 	
 	Vertex vertices [] =
-	{ Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
+	{ 
+	  Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
 	  Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
 	  Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
 	  Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
@@ -101,8 +108,7 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	//render loop
 	bool was = true;
 	do
-	{
-		
+	{	
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0, 0, 0, 1);
 		if (was)
@@ -132,7 +138,6 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 	//clean up
 	delete (sp);
 	delete(mesh);
-
 }
 
 

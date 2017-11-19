@@ -6,9 +6,7 @@
 
 int main()
 {
-	
-	
-	Renderer::Start(1920,1080,"test",true);
-    return 0;
+   Renderer::Start(1920,1080,"test",true);
+   return 0;
 }
 

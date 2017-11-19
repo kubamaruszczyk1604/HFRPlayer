@@ -7,17 +7,12 @@
 class Renderer
 {
 private:
-	//Window object  
 	static GLFWwindow* s_GLWindow;
 
 	//callbacks
-	//Define an error callback  
 	static void Error_callback(int error, const char* description);
-	//Define the key input callback  
 	static void Key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	//Define mouse pos change callback
 	static void MousePosChange_callback(GLFWwindow* window, double mouseX, double mouseY);
-	//Define mouse button press callback
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
 	static bool s_Running;
