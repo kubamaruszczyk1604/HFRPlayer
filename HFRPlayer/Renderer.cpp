@@ -38,13 +38,12 @@ void Renderer::AddModel(Model * model)
 bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 {
 	//Set the error callback  
-	//glfwSetErrorCallback(Error_callback);
-	//glewExperimental = GL_TRUE;
+	glfwSetErrorCallback(Error_callback);
+	glewExperimental = GL_TRUE;
 	if (!glfwInit())
 	{
 		return false;
 	}
-	glfwSetErrorCallback(Error_callback);
 	//Set the GLFW window creation hints - these are optional  
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); //Request a specific OpenGL version  
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); //Request a specific OpenGL version  
@@ -67,10 +66,23 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 
 	//This function makes the context of the specified window current on the calling thread.   
 	glfwMakeContextCurrent(s_GLWindow);
+
+	//Initialize GLEW  
+	GLenum err = glewInit();
+
+	//If GLEW hasn't initialized  
+	if (err != GLEW_OK)
+	{
+		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+		return -1;
+	}
 	//Set the key callback  
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
-
+	
 	glEnable(GL_DEPTH_TEST);
+	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
+
+
 
 	//render loop
 	float time = 0;
