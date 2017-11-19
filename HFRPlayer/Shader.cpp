@@ -15,13 +15,11 @@ Shader::Shader(GLenum type) :m_Id(0)
 
 Shader::~Shader()
 {
-
 	glDeleteShader(m_Id);
 }
 
 bool Shader::LoadFromFile(const std::string & path)
 {
-
 	std::ifstream ifs(path);
 
 	if (!ifs.is_open()) return false;

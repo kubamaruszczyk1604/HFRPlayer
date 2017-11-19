@@ -18,6 +18,8 @@ class Model
 public:
 
 	Model(ShaderProgram* shaderProgram, Mesh* mesh);
+	Model(const Model&) = delete;
+	Model& operator=(const Model&) = delete;
 	~Model();
 
 

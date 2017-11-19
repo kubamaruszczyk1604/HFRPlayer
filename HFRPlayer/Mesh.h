@@ -9,6 +9,8 @@ class Mesh
 {
 public:
 	Mesh();
+	Mesh(const Mesh&) = delete;
+	Mesh& operator=(const Mesh&) = delete;
 	~Mesh();
 
 	bool Create(Vertex vertices[], int numVertices);

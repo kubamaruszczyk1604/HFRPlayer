@@ -26,9 +26,12 @@ private:
 
 public:
 	static void AddModel(Model* model);
-
+	static void SetTextures(GLuint* IDs, int count);
+	static void SetFPS(float fps);
 	static bool Start(int w, int h, std::string title, bool fullScreen = 0);
 	Renderer() = delete;
+	Renderer(const Renderer&) = delete;
+	Renderer& operator=(const Renderer&) = delete;
 	~Renderer();
 };
 
