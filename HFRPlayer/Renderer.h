@@ -25,6 +25,7 @@ private:
 	//Define mouse button press callback
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
+	static bool s_Running;
 
 public:
 	static  bool Start(int w, int h, std::string title, bool fullScreen = 0);
