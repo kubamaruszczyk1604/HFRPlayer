@@ -13,6 +13,7 @@ int main()
    std::vector<GLuint> v;
    v = { texID,texID2 ,texID3};
    Renderer::SetPictures(v);
+   Renderer::SetFPS(145);
    Renderer::Run();
 
  

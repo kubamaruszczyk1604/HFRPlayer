@@ -16,7 +16,9 @@ private:
 	static void MousePosChange_callback(GLFWwindow* window, double mouseX, double mouseY);
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
-	static Stopwatch s_Stopwatch;
+	static Stopwatch s_FpsCountTimer;
+	static Stopwatch s_FpsLimiter;
+	static float s_TargetFrameTime;
 	static bool s_Running;
 	static std::vector<GLuint> s_Pictures;
 	static unsigned s_CurrentIndex;

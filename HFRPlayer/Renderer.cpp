@@ -4,7 +4,9 @@
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 
-Stopwatch Renderer::s_Stopwatch;
+Stopwatch Renderer::s_FpsCountTimer;
+Stopwatch Renderer::s_FpsLimiter;
+float Renderer::s_TargetFrameTime {1.0f/120.0f};
 bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
@@ -48,6 +50,7 @@ void Renderer::SetPictures(std::vector<GLuint>& IDs)
 
 void Renderer::SetFPS(float fps)
 {
+	s_TargetFrameTime = 1.0f / fps;
 }
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
@@ -127,7 +130,8 @@ void Renderer::Run()
 	//glBindTexture(GL_TEXTURE_2D, texID2);
 
 	unsigned sizeCached = s_Pictures.size();
-	s_Stopwatch.Start();
+	s_FpsCountTimer.Start();
+	s_FpsLimiter.Start();
 	//render loop
 	bool was = true;
 	do
@@ -137,20 +141,32 @@ void Renderer::Run()
 
 
 		sp->SetAsCurrent();//Shader
-		s_CurrentIndex++;
-		if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
-		glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
+		
+		//if (s_FpsLimiter.ElapsedTime() >= s_TargetFrameTime)
+		{
+			
+			s_CurrentIndex++;
+			if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
+			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
+		//	s_FpsLimiter.Stop();
+			//s_FpsLimiter.Start();
+		}
+
+		
 		
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
 
+	
+
+
 		s_FrameCounter++;
-		if (s_Stopwatch.ElapsedTime() >= 1)
+		if (s_FpsCountTimer.ElapsedTime() >= 1)
 		{
 			std::cout << "FPS: " << s_FrameCounter << std::endl;
-			s_Stopwatch.Stop();
+			s_FpsCountTimer.Stop();
 			s_FrameCounter = 0;
-			s_Stopwatch.Start();
+			s_FpsCountTimer.Start();
 		}
 		glfwPollEvents();
 
