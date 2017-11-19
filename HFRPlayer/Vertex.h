@@ -1,91 +1,76 @@
 #pragma once
 #include "GLM\GLM.hpp"
+
+
 struct Vertex
 {
-	float x, y, z;
-	float nx, ny, nz;
-	float u, v;
+
+	glm::vec3 m_Position;
+	glm::vec3 m_Normal;
+	glm::vec2 m_UVs;
+
+	Vertex()
+	{
+		m_Position = glm::vec3(0, 0, 0);
+		m_Normal = glm::vec3(0, 1, 0);
+		m_UVs = glm::vec2(0, 0);
+	}
 
 	Vertex(const glm::vec3& pos)
 	{
-		x = pos.x;
-		y = pos.y;
-		z = pos.z;
-	}
-	Vertex()
-	{
-		x = 0; y = 0; z = 0;
-		nx = 0; ny = 0; nz = 0;
-		u = 0; v = 0;
+		m_Position = pos;
 	}
 
-	Vertex(float X, float Y, float Z)
+	Vertex(float x, float y, float z)
 	{
-		x = X;
-		y = Y;
-		z = Z;
+		m_Position = glm::vec3(x, y, z);
 	}
+
 
 	Vertex(const glm::vec3& pos, const glm::vec3& nor)
 	{
-		x = pos.x;
-		y = pos.y;
-		z = pos.z;
-
-		nx = nor.x;
-		ny = nor.y;
-		nz = nor.z;
+		m_Position = pos;
+		m_Normal = nor;
+		m_UVs = glm::vec2(0, 0);
 	}
 
 	Vertex(const glm::vec3& pos, const glm::vec3& nor, const glm::vec2& uv)
 	{
-		x = pos.x;
-		y = pos.y;
-		z = pos.z;
-
-		nx = nor.x;
-		ny = nor.y;
-		nz = nor.z;
-
-		u = uv.x;
-		v = uv.y;
+		m_Position = pos;
+		m_Normal = nor;
+		m_UVs = uv;
 	}
 
 
 
 	void SetXYZ(const glm::vec3& pos)
 	{
-		x = pos.x;
-		y = pos.y;
-		z = pos.z;
+		m_Position = pos;
 	}
 	void SetNormal(const glm::vec3& nor)
 	{
-		nx = nor.x;
-		ny = nor.y;
-		nz = nor.z;
+		m_Normal = nor;
 	}
 
-	void SetUV(float U, float V)
+	void SetUV(float u, float v)
 	{
-		u = U;
-		v = V;
+		m_UVs = glm::vec2(u, v);
 	}
 
 
 	glm::vec3 GetXYZ()
 	{
-		return glm::vec3(x, y, z);
+		return m_Position;
 	}
 
 	glm::vec3 GetNormal()
 	{
-		return glm::vec3(nx, ny, nz);
+		return m_Normal;
 	}
 
 	glm::vec2 GetUV()
 	{
-		return glm::vec2(u, v);
+		return m_UVs;
 	}
 
 
