@@ -61,7 +61,7 @@ bool Renderer::Start(int w, int h, std::string title, bool fullScreen)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		//time += 0.01f;
 		//glClearColor(abs(sin(time)), abs(cos(time)), 0, 1);
-
+		//fr test
 		if (was)
 		{
 			glClearColor(1, 0, 0, 1);
