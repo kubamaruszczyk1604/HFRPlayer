@@ -15,6 +15,7 @@ public:
 	~Shader();
 
 	bool LoadFromFile(const std::string& path);
+	void SetShaderString(const std::string& content);
 	bool Compile(std::string& log);
 	GLuint GetID();
 

@@ -2,12 +2,14 @@
 #include "ShaderProgram.h"
 #include <iostream>
 
-ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath) :
+ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, ShaderStringType type) :
 	m_VertexOK(false),
 	m_FragmentOK(false)
 {
 	m_VertexShader = new Shader(GL_VERTEX_SHADER);
-	bool success = m_VertexShader->LoadFromFile(vertexPath);
+	bool success = true;
+	if (type == ShaderStringType::Path) m_VertexShader->LoadFromFile(vertexShader);
+	else m_VertexShader->SetShaderString(vertexShader);
 	if (!success)
 	{
 		std::cerr << "Failed to load vertex shader " << std::endl;
@@ -20,7 +22,10 @@ ShaderProgram::ShaderProgram(const std::string& vertexPath, const std::string& f
 
 
 	m_FragmentShader = new Shader(GL_FRAGMENT_SHADER);
-	success = m_FragmentShader->LoadFromFile(fragmentPath);
+
+	success = true;
+	if (type == ShaderStringType::Path) m_FragmentShader->LoadFromFile(fragmentShader);
+	else m_FragmentShader->SetShaderString(fragmentShader);
 	if (!success)
 	{
 		std::cerr << "Failed to load fragment shader " << std::endl;

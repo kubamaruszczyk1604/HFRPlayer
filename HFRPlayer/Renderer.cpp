@@ -101,7 +101,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 void Renderer::Run()
 {
 	//glEnable(GL_DEPTH_TEST);
-	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt");
+	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt",ShaderStringType::Path);
 
 	Vertex vertices[] =
 	{

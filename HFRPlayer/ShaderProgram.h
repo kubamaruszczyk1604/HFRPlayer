@@ -1,12 +1,15 @@
 #pragma once
 #include "Shader.h"
+
+enum class ShaderStringType { Path, Content };
+
 class ShaderProgram
 {
 	Shader* m_VertexShader;
 	Shader* m_FragmentShader;
 
 public:
-	ShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
+	ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, ShaderStringType type);
 	ShaderProgram(const ShaderProgram&) = delete;
 	ShaderProgram& operator=(const ShaderProgram&) = delete;
 

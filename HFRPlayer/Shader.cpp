@@ -38,6 +38,15 @@ bool Shader::LoadFromFile(const std::string & path)
 	return true;
 }
 
+void Shader::SetShaderString(const std::string & content)
+{
+#ifdef PRINT_SHADERS
+	std::cout << content << std::endl;
+#endif
+	const char * c = content.c_str();
+	glShaderSource(m_Id, 1, &c, NULL);
+}
+
 bool Shader::Compile(std::string& log)
 {
 	glCompileShader(m_Id);
