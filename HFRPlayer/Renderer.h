@@ -24,6 +24,12 @@ private:
 	static unsigned s_CurrentIndex;
 	static unsigned s_FrameCounter;
 
+private:
+
+	static std::string GenVertexShader();
+	static std::string GenFragmentShader();
+
+
 public:
 	static void SetPictures(GLuint* IDs, int count);
 	static void SetPictures(std::vector<GLuint>& IDs);

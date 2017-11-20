@@ -39,6 +39,34 @@ void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int pr
 }
 
 
+std::string Renderer::GenVertexShader()
+{
+	std::string vertexShader = "#version 330\n\n";
+	vertexShader += "layout(location = 0) in vec3 vertex_position;\n";
+	vertexShader += "layout(location = 1) in vec3 vertex_normal;\n";
+	vertexShader += "layout(location = 2) in vec2 uvs;\n\n";
+	vertexShader += "uniform mat4 uWORLD;\n";
+	vertexShader += "out vec3 oPosition_WorldSpace;\n";
+	vertexShader += "out vec2 oUVs;\n\n";
+	vertexShader += "void main()\n{\n";
+	vertexShader += " oPosition_WorldSpace = (vec4(vertex_position,1)).xyz;\n";
+	vertexShader += "  oUVs = uvs;\n";
+	vertexShader += "   gl_Position =  vec4(vertex_position,1.0);\n}";
+	return vertexShader;
+}
+
+std::string Renderer::GenFragmentShader()
+{
+	std::string fragmentShader = "#version 330\n\n";
+	fragmentShader += "in vec3 oPosition_WorldSpace;\n";
+	fragmentShader += "in vec2 oUVs;\n\n";
+	fragmentShader += "out vec4 FragColour;\n\n";
+	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
+	fragmentShader += "void main()\n{\n";
+	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
+	return fragmentShader;
+}
+
 void Renderer::SetPictures(GLuint * IDs, int count)
 {
 }
@@ -101,8 +129,8 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 void Renderer::Run()
 {
 	//glEnable(GL_DEPTH_TEST);
-	ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt",ShaderStringType::Path);
-
+	//ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt",ShaderStringType::Path);
+	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
 		//Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
