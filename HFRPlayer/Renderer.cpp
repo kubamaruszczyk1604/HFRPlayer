@@ -11,7 +11,7 @@ bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
 unsigned Renderer::s_FrameCounter{ 0 };
-
+//t
 
 void Renderer::Error_callback(int error, const char * description)
 {
