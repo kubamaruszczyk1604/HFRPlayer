@@ -1,18 +1,15 @@
 #include "ConfigReader.h"
 #include <fstream>
 
-
-
+using namespace std;
 
 ConfigReader::~ConfigReader()
 {
 }
 
-using namespace std;//
-
 bool ConfigReader::ReadConfig(const string & configFile, ConfigInfo*& outConfig)
 {
-	//
+	//fl
 	ifstream ifs(configFile);
 	if (!ifs.is_open()) return false;
 	string name = "";
