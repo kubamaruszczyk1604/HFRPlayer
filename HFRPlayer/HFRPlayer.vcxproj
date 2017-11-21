@@ -167,6 +167,7 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConfigReader.cpp" />
     <ClCompile Include="GLTextureLoader.cpp" />
     <ClCompile Include="HFRPlayer.cpp" />
     <ClCompile Include="Mesh.cpp" />

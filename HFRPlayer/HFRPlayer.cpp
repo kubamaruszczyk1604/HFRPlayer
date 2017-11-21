@@ -40,7 +40,7 @@ int main(int argc, char** args)
 	if (argc < 2) // no cmd line args provided - READ CONFIG
 	{
 		std::cout << "NO ARGS PROVIDED... READING CONFIG: ";
-		if (!ConfigReader::ReadConfig("c:/Zapas/test.txt", conf))
+		if (!ConfigReader::ReadConfig("c:/Zapas/config.txt", conf))
 		{
 			std::cout << " FAILED" << std::endl;
 			std::cout << " HFR PLAYER WILL QUIT NOW." << std::endl;
