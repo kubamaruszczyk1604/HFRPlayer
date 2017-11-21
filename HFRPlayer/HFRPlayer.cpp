@@ -2,6 +2,7 @@
 
 #include <sys/stat.h>
 #include "Renderer.h"
+#include "ConfigReader.h"
 
 bool FileExists(const std::string& name) 
 {
@@ -29,6 +30,18 @@ bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
 
 int main(int argc, char** args)
 {
+	ConfigInfo* cinf = 0;
+	//hhg
+	bool status = ConfigReader::ReadConfig("c:/Zapas/test.txt", cinf);
+	std::cout << "STATUS: " << status << std::endl;
+	if (status)
+	{
+		std::cout << "NAME: " << cinf->NameBase << std::endl;
+		std::cout << "FPS: " << cinf->FPS << std::endl;
+	}
+	int linger;
+	std::cin >> linger;
+	return 0;
 	
    Renderer::Init(1920,1080,"test",true);
 
