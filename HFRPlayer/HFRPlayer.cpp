@@ -30,7 +30,7 @@ bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
 int main(int argc, char** args)
 {
 	
-   Renderer::Init(1920,1080,"test",false);
+   Renderer::Init(1920,1080,"test",true);
 
 
    /*GLuint texID = GLTextureLoader::LoadTexture("c:/Zapas/text.png");
@@ -41,7 +41,7 @@ int main(int argc, char** args)
    if (!ReadInTextures(v, "text"))
    {
 	   Renderer::Cleanup();
-	   std::cout << "No file found!" << std::endl;
+	   std::cout << "No file(s) found!" << std::endl;
 	   return 0;
    }
 
