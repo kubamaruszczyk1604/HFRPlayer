@@ -1,0 +1,3 @@
+*** THIS IS HFR CONFIG FILE ***
+NAME text
+FPS 100.98
