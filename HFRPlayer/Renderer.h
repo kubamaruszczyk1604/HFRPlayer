@@ -36,6 +36,8 @@ public:
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
+
+	static void Cleanup();
 	Renderer() = delete;
 	Renderer(const Renderer&) = delete;
 	Renderer& operator=(const Renderer&) = delete;

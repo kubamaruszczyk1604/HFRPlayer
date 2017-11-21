@@ -209,6 +209,12 @@ void Renderer::Run()
 	delete(mesh);
 }
 
+void Renderer::Cleanup()
+{
+	glfwDestroyWindow(s_GLWindow);
+	glfwTerminate();
+}
+
 
 
 
