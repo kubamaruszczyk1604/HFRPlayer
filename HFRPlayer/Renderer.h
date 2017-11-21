@@ -1,10 +1,13 @@
 #pragma once
+/* SIMPLE 2D IMAGE RENDERER (OPEN GL)*/
 
-#include "Model.h"
 #include <string>
 #include <vector>
+
+#include "Model.h"
 #include "GLTextureLoader.h"
 #include "Stopwatch.h"
+
 class Renderer
 {
 private:
@@ -36,8 +39,9 @@ public:
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
-
 	static void Cleanup();
+
+	//  Class intended as static
 	Renderer() = delete;
 	Renderer(const Renderer&) = delete;
 	Renderer& operator=(const Renderer&) = delete;
