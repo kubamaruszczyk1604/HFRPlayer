@@ -5,6 +5,7 @@ using namespace std;
 
 ConfigReader::~ConfigReader()
 {
+
 }
 
 bool ConfigReader::ReadConfig(const string & configFile, ConfigInfo*& outConfig)
