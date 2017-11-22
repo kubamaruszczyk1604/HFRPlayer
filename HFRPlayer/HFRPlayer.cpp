@@ -12,7 +12,7 @@ bool FileExists(const std::string& name)
 	return (stat(name.c_str(), &buffer) == 0); 
 }
 
-//
+
 bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
 {
 	unsigned counter = 0;
@@ -27,7 +27,6 @@ bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
 		counter++;
 		fileName = formant + std::to_string(counter) + ".png";
 	}
-
 	return true;
 }
 
@@ -87,7 +86,8 @@ int main(int argc, char** args)
 	   std::cout << "No file(s) found!" << std::endl;
 	   return 0;
    }
-
+   delete conf;
+   conf = nullptr;
    // Pass images to the renderer
    Renderer::SetPictures(v);
 

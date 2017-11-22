@@ -19,8 +19,6 @@ ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string&
 	m_VertexOK = m_VertexShader->Compile(log);
 	std::cout << "Vertex Shader status: " << log << std::endl;
 
-
-
 	m_FragmentShader = new Shader(GL_FRAGMENT_SHADER);
 
 	success = true;
@@ -38,10 +36,7 @@ ShaderProgram::ShaderProgram(const std::string& vertexShader, const std::string&
 	m_ProgId = glCreateProgram();
 	glAttachShader(m_ProgId, m_VertexShader->GetID());
 	glAttachShader(m_ProgId, m_FragmentShader->GetID());
-
 	glLinkProgram(m_ProgId);
-
-
 }
 
 

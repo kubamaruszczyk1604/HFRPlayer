@@ -15,7 +15,6 @@ public:
 
 	bool Create(Vertex vertices[], int numVertices);
 	void Draw()const;
-
 	void CreateIndexBuffer(int indices[], int numIndices);
 
 private:

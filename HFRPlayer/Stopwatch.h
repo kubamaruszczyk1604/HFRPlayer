@@ -3,9 +3,7 @@
 #include <ctime>
 #include <ratio>
 
-
 /*Simple stopwatch (based on chrono library) by Kuba Maruszczyk*/
-
 
 class Stopwatch
 {
