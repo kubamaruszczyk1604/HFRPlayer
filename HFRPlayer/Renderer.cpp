@@ -11,7 +11,7 @@ bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
 unsigned Renderer::s_FrameCounter{ 0 };
-//t
+
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -23,10 +23,8 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 {
 	if (action ==  GLFW_PRESS)
 	{
-
 		if (key == GLFW_KEY_ESCAPE)
 			glfwSetWindowShouldClose(window, GL_TRUE);
-
 	}
 }
 
@@ -83,9 +81,10 @@ void Renderer::SetFPS(float fps)
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 {
-	//Set the error callback  
+
 	glfwSetErrorCallback(Error_callback);
     glewExperimental = GL_TRUE;
+
 	if (!glfwInit())
 	{
 		return false;
@@ -102,34 +101,30 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	else 
 		s_GLWindow = glfwCreateWindow(w, h, title.c_str(), NULL, NULL);
 
-
 	if (!s_GLWindow)
 	{
 		fprintf(stderr, "Failed to open GLFW window.\n");
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-
-	   
+   
 	glfwMakeContextCurrent(s_GLWindow);
 
-	//Initialize GLEW  
+	//GLEW  stuff init
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
 		return -1;
 	}
-
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
-	
-	
+		
 }
 
 void Renderer::Run()
 {
 	//glEnable(GL_DEPTH_TEST);
-	//ShaderProgram* sp = new ShaderProgram("C:/Zapas/glVert.txt", "c:/Zapas/glFrag.txt",ShaderStringType::Path);
+	//ShaderProgram* sp = new ShaderProgram("C:/Test/glVert.txt", "c:/Test/glFrag.txt",ShaderStringType::Path);
 	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
@@ -158,15 +153,16 @@ void Renderer::Run()
 	//glBindTexture(GL_TEXTURE_2D, texID2);
 
 	unsigned sizeCached = s_Pictures.size();
+
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
+
 	//render loop
 	bool was = true;
 	do
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0, 0, 0, 1);
-
 
 		sp->SetAsCurrent();//Shader
 		
@@ -178,14 +174,10 @@ void Renderer::Run()
 			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
 		//	s_FpsLimiter.Stop();
 			//s_FpsLimiter.Start();
-		}
-
-		
+		}		
 		
 		mesh->Draw();
 		glfwSwapBuffers(s_GLWindow);
-
-	
 
 
 		s_FrameCounter++;
@@ -214,8 +206,6 @@ void Renderer::Cleanup()
 	glfwDestroyWindow(s_GLWindow);
 	glfwTerminate();
 }
-
-
 
 
 Renderer::~Renderer()

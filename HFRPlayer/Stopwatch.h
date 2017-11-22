@@ -7,21 +7,6 @@
 
 class Stopwatch
 {
-
-public:
-
-	Stopwatch();
-	~Stopwatch();
-
-	Stopwatch(const Stopwatch&) = delete;
-	Stopwatch &operator=(const Stopwatch&) = delete;
-
-public:
-	void Start();
-	void Stop();
-	void UnPause();
-	void Pause();
-	double ElapsedTime()const;
 private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_Start;
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_End;
@@ -32,5 +17,20 @@ private:
 
 	bool isRunning;
 	bool isPaused;
+
+public:
+
+	Stopwatch();
+	Stopwatch(const Stopwatch&) = delete;
+	Stopwatch &operator=(const Stopwatch&) = delete;
+	~Stopwatch();
+
+public:
+	void Start();
+	void Stop();
+	void UnPause();
+	void Pause();
+	double ElapsedTime()const;
+
 
 };

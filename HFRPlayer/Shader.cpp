@@ -12,7 +12,6 @@ Shader::Shader(GLenum type) :m_Id(0)
 	m_Id = glCreateShader(type);
 }
 
-
 Shader::~Shader()
 {
 	glDeleteShader(m_Id);
@@ -61,8 +60,6 @@ bool Shader::Compile(std::string& log)
 		std::vector<char> errorLog(maxLength);
 		glGetShaderInfoLog(m_Id, maxLength, &maxLength, &errorLog[0]);
 		log = std::string(errorLog.begin(), errorLog.end());
-		// Provide the infolog in whatever manor you deem best.
-		// Exit with failure.
 		glDeleteShader(m_Id); // Don't leak the shader.
 		return false;
 	}

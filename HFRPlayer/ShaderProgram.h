@@ -12,7 +12,6 @@ public:
 	ShaderProgram(const std::string& vertexShader, const std::string& fragmentShader, ShaderStringType type);
 	ShaderProgram(const ShaderProgram&) = delete;
 	ShaderProgram& operator=(const ShaderProgram&) = delete;
-
 	~ShaderProgram();
 
 	bool SetAsCurrent();
