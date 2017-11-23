@@ -6,14 +6,14 @@
 #include <exception>
 
 
-bool FileExists(const std::string& name) 
+bool FileExists(const std::string& name)
 {
 	struct stat buffer;
 	return (stat(name.c_str(), &buffer) == 0); //
 }
 
 
-bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
+bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
 {
 	unsigned counter = 0;
 	std::string fileName = formant + std::to_string(counter) + ".png";
@@ -25,17 +25,18 @@ bool ReadInTextures(std::vector<GLuint>& textures,const std::string& formant)
 	{
 		return false;
 	}
-	
+
 	while (FileExists(fileName))
 	{
 		std::cout << "Loading file: " << fileName;
 		textures.push_back(GLTextureLoader::LoadTexture(fileName));
 		std::cout << " LOADED" << std::endl;
 		counter++;
-		fileName = formant + std::to_string(counter) + ".png";	
+		fileName = formant + std::to_string(counter) + ".png";
 	}
-	
+
 	std::cout << "Loaded " << (counter) << " files." << std::endl;
+	GLTextureLoader::staticCleanup();
 	return true;
 }
 
@@ -54,7 +55,7 @@ int main(int argc, char** args)
 			std::cout << " HFR PLAYER WILL QUIT NOW." << std::endl;
 			return 0;
 		}
-		else { std::cout << " OK" << std::endl;}
+		else { std::cout << " OK" << std::endl; }
 	}
 
 	else // Args provided - USE PROVIDED ARGS
@@ -62,50 +63,52 @@ int main(int argc, char** args)
 		std::string name = "";
 		float fps = -1;
 		std::cout << "ARGS PROVIDED..." << std::endl;
-		if (argc > 1) {	name = std::string(args[1]); } // name base (formant) provided
+		if (argc > 1) { name = std::string(args[1]); } // name base (formant) provided
 		if (argc > 2) // fps provided..
 		{
 			try // check if floating point number.
 			{
 				fps = std::stof(std::string(args[2]));
-				std::cout << fps << std::endl;	
+				std::cout << fps << std::endl;
 			}
-			catch(std::exception& e) // not a float
+			catch (std::exception& e) // not a float
 			{
 				fps = -1;
 				std::cout << "Incorrect FPS argument --> NO FPS LIMIT WILL BE APPLIED!" << std::endl;
-			}	
+			}
 		}
 		conf = new ConfigInfo(std::string(args[1]), fps);
 	}
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
-	
+
 	///////////////  RENDERING STARTS HERE ///////////////////////
 
 
-   // Init OpenGL
-	Renderer::Init(1920,1080,"FPS",true); // arguments (resX, resY, Title, windowed or  fullscreen)
-   
-   //Read in images
-   std::vector<GLuint> v;
-   if (!ReadInTextures(v, conf->NameBase)) // if there is not a single image file - quit.
-   {
-	   Renderer::Cleanup();
-	   std::cout << "No file(s) found!" << std::endl;
-	   return 0;
-   }
-   delete conf;
-   conf = nullptr;
-   // Pass images to the renderer
-   Renderer::SetPictures(v);
+	// Init OpenGL
+	Renderer::Init(2560, 1440, "FPS", true); // arguments (resX, resY, Title, windowed or  fullscreen)
+	Renderer::SetFPS(conf->FPS);
 
-   // Renderer loop(blocking)
-   Renderer::Run();
+	//Read in images
+	std::vector<GLuint> v;
+	if (!ReadInTextures(v, conf->NameBase)) // if there is not a single image file - quit.
+	{
+		Renderer::Cleanup();
+		std::cout << "No file(s) found!" << std::endl;
+		return 0;
+	}
+	delete conf;
+	conf = nullptr;
+	// Pass images to the renderer
+	Renderer::SetPictures(v);
 
-   // free all textures
-   glDeleteTextures(v.size(), &v[0]);
-   
-   return 0;
+	// Renderer loop(blocking)
+	Renderer::Run();
+
+	// free all textures
+	glDeleteTextures(v.size(), &v[0]);
+
+
+	return 0;
 }
 

@@ -20,5 +20,10 @@ public:
 	GLTextureLoader(const GLTextureLoader&) = delete;
 
 	static GLuint LoadTexture(const std::string& path);
+
+	static void staticCleanup();
+
+private:
+	static GLubyte* s_texture;
 };
 

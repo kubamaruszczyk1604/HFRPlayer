@@ -7,6 +7,8 @@ GLFWwindow* Renderer::s_GLWindow{ nullptr };
 Stopwatch Renderer::s_FpsCountTimer;
 Stopwatch Renderer::s_FpsLimiter;
 float Renderer::s_TargetFrameTime {1.0f/120.0f};
+uint32_t Renderer::s_frameRepeatCount{ 1 };
+uint32_t Renderer::s_framePhase{ 1 };
 bool Renderer::s_Running{ true };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
@@ -76,7 +78,13 @@ void Renderer::SetPictures(std::vector<GLuint>& IDs)
 
 void Renderer::SetFPS(float fps)
 {
-	s_TargetFrameTime = 1.0f / fps;
+	// round down to the nearest integer
+	int aFps = (int)fps;
+
+	// assume max refresh rate of 165. TODO: should this come from a config as well?
+	s_frameRepeatCount = 165 / aFps;
+	aFps = aFps * s_frameRepeatCount;
+	s_TargetFrameTime = 1.0f / aFps;
 }
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
@@ -94,10 +102,9 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
 	//glfwWindowHint(GLFW_SAMPLES, 4); 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 	
 	if(fullScreen)
-	s_GLWindow = glfwCreateWindow(w, h, title.c_str(), glfwGetPrimaryMonitor(), NULL);
+		s_GLWindow = glfwCreateWindow(w, h, title.c_str(), glfwGetPrimaryMonitor(), NULL);
 	else 
 		s_GLWindow = glfwCreateWindow(w, h, title.c_str(), NULL, NULL);
 
@@ -157,28 +164,34 @@ void Renderer::Run()
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
 
+	sp->SetAsCurrent();//Shader
+
 	//render loop
-	bool was = true;
 	do
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0, 0, 0, 1);
-
-		sp->SetAsCurrent();//Shader
-		
-		//if (s_FpsLimiter.ElapsedTime() >= s_TargetFrameTime)
+		if (s_framePhase >= s_frameRepeatCount)
 		{
-			
 			s_CurrentIndex++;
 			if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
-			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
-		//	s_FpsLimiter.Stop();
-			//s_FpsLimiter.Start();
-		}		
+			s_framePhase = 1;
+		}
+		else
+		{
+			s_framePhase++;
+		}
 		
+		// draw
+		glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
 		mesh->Draw();
-		glfwSwapBuffers(s_GLWindow);
 
+		while (s_FpsLimiter.ElapsedTime() < s_TargetFrameTime)
+		{
+		}
+
+		glfwSwapBuffers(s_GLWindow);
+		s_FpsLimiter.Stop();
+		s_FpsLimiter.Start();
+		
 
 		s_FrameCounter++;
 		if (s_FpsCountTimer.ElapsedTime() >= 1)

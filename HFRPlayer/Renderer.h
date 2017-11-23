@@ -20,8 +20,12 @@ private:
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
 	static Stopwatch s_FpsCountTimer;
+
 	static Stopwatch s_FpsLimiter;
+	static uint32_t s_framePhase;
 	static float s_TargetFrameTime;
+	static uint32_t s_frameRepeatCount;
+
 	static bool s_Running;
 	static std::vector<GLuint> s_Pictures;
 	static unsigned s_CurrentIndex;
