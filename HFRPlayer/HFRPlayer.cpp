@@ -36,7 +36,6 @@ bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
 	}
 
 	std::cout << "Loaded " << (counter) << " files." << std::endl;
-	GLTextureLoader::staticCleanup();
 	return true;
 }
 
