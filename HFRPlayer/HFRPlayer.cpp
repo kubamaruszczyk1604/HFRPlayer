@@ -32,8 +32,6 @@ bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
 		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
 		textures.push_back(GLTextureLoader::PushToGPU(bitmap));
 		GLTextureLoader::FreeImageMemory(bitmap);
-		//delete bitmap;
-		//bitmap = nullptr;
 		//textures.push_back(GLTextureLoader::LoadTexture(fileName));
 		std::cout << " LOADED" << std::endl;
 		counter++;
