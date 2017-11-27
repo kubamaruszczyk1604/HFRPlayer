@@ -29,7 +29,12 @@ bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
 	while (FileExists(fileName))
 	{
 		std::cout << "Loading file: " << fileName;
-		textures.push_back(GLTextureLoader::LoadTexture(fileName));
+		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
+		textures.push_back(GLTextureLoader::PushToGPU(bitmap));
+		GLTextureLoader::FreeImageMemory(bitmap);
+		//delete bitmap;
+		//bitmap = nullptr;
+		//textures.push_back(GLTextureLoader::LoadTexture(fileName));
 		std::cout << " LOADED" << std::endl;
 		counter++;
 		fileName = formant + std::to_string(counter) + ".png";
@@ -85,7 +90,7 @@ int main(int argc, char** args)
 
 
 	// Init OpenGL
-	Renderer::Init(2560, 1440, "FPS", true); // arguments (resX, resY, Title, windowed or  fullscreen)
+	Renderer::Init(2560, 1440, "FPS", false); // arguments (resX, resY, Title, windowed or  fullscreen)
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
