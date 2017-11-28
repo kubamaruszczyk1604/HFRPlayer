@@ -35,7 +35,7 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 			
 		}
 		
-		//GLTextureLoader::FreeImageMemory(bitmap);
+		GLTextureLoader::FreeImageMemory(bitmap);
 		s_Queues[startAtIndex].push(bitmap);
 		s_TestInts[startAtIndex].push(counter);
 
@@ -67,9 +67,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 	for (int i = 0; i < MAX_THREAD_COUNT; ++i)
 	{
 		if (FileExists(formant + std::to_string(i) + ".png"))
-		{
-			
-			
+		{		
         	s_Queues.push_back(queue<FIBITMAP*>());
 			s_TestInts.push_back(queue<int>());
 
