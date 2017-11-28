@@ -4,8 +4,8 @@
 
 const int FastImgLoader::MAX_THREAD_COUNT{8};
 int FastImgLoader::s_RunningThreads{ 0 };
-std::vector<std::queue<FIBITMAP*>>FastImgLoader::s_Queues;
-std::vector<std::queue<int>> FastImgLoader::s_TestInts;
+SafeQueue<FIBITMAP*> FastImgLoader::s_Queues[8];
+//std::vector<SafeQueue<int>> FastImgLoader::s_TestInts;
 std::mutex FastImgLoader::s_CounterMutex;
 std::mutex FastImgLoader::s_ConsoleMutex;
 
@@ -35,9 +35,9 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 			
 		}
 		
-		GLTextureLoader::FreeImageMemory(bitmap);
-		s_Queues[startAtIndex].push(bitmap);
-		s_TestInts[startAtIndex].push(counter);
+		//GLTextureLoader::FreeImageMemory(bitmap);
+		s_Queues[startAtIndex].enqueue(bitmap);
+		//s_TestInts[startAtIndex].enqueue(counter);
 
 		counter+=MAX_THREAD_COUNT;
 		s_CounterMutex.lock();
@@ -68,8 +68,9 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 	{
 		if (FileExists(formant + std::to_string(i) + ".png"))
 		{		
-        	s_Queues.push_back(queue<FIBITMAP*>());
-			s_TestInts.push_back(queue<int>());
+			//SafeQueue<FIBITMAP*>a;
+			/////////s_Queues.push_back(a);
+			//s_TestInts.push_back(SafeQueue<int>());
 
 			s_RunningThreads++;
 			threads.push_back(thread(LoadSequence, formant, i));
@@ -117,10 +118,11 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 	{
 		if (queueIndex > (MAX_THREAD_COUNT - 1)) queueIndex = 0;
 		
-		FIBITMAP* bitmap = s_Queues[queueIndex].front();
+		FIBITMAP* bitmap = nullptr;
+		s_Queues[queueIndex].dequeue(bitmap);
 		output.push_back(GLTextureLoader::PushToGPU(bitmap));
 		GLTextureLoader::FreeImageMemory(bitmap);
-		s_Queues[queueIndex].pop();
+		//s_Queues[queueIndex].pop();
 		queueIndex++;
 
 	}

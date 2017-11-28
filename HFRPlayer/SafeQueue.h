@@ -7,11 +7,13 @@ template<typename T>
 class SafeQueue
 {
 public:
+	SafeQueue() = default;
 	~SafeQueue()
 	{
 		clear();
 	}
-
+	SafeQueue(const SafeQueue&) = delete;
+	SafeQueue& operator=(const SafeQueue&) = delete;
 	void enqueue(const T element);
 	bool dequeue(T& out);
 	void clear();

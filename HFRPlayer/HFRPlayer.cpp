@@ -56,7 +56,7 @@ int main(int argc, char** args)
 
 
 	// Init OpenGL
-	Renderer::Init(2560, 1440, "FPS", false); // arguments (resX, resY, Title, windowed or  fullscreen)
+	Renderer::Init(800, 600, "FPS", false); // arguments (resX, resY, Title, windowed or  fullscreen)
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
