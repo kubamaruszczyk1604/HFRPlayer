@@ -17,6 +17,7 @@ private:
 	//static std::vector<SafeQueue<int>> s_TestInts;
 	static std::mutex s_CounterMutex;
 	static std::mutex s_ConsoleMutex;
+	static int s_ActiveCount;
 
 public:
 	FastImgLoader() = delete;
