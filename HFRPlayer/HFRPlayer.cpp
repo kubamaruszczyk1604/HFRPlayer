@@ -13,9 +13,6 @@
 //}
 
 
-
-
-
 int main(int argc, char** args)
 {
 	ConfigInfo* conf{ nullptr };
