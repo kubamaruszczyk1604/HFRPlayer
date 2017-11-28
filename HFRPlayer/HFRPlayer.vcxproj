@@ -156,6 +156,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FastImgLoader.h" />
     <ClInclude Include="GLTextureLoader.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigReader.cpp" />
+    <ClCompile Include="FastImgLoader.cpp" />
     <ClCompile Include="GLTextureLoader.cpp" />
     <ClCompile Include="HFRPlayer.cpp" />
     <ClCompile Include="Mesh.cpp" />

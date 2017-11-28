@@ -1,46 +1,17 @@
 // MAIN ENTRY HERE 
 
-#include <sys/stat.h>
 #include "Renderer.h"
+#include "FastImgLoader.h"
 #include "ConfigReader.h"
 #include <exception>
 
 
-bool FileExists(const std::string& name)
-{
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0); //
-}
+//bool FileExists(const std::string& name)
+//{
+//	struct stat buffer;
+//	return (stat(name.c_str(), &buffer) == 0); 
+//}
 
-
-bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
-{
-	unsigned counter = 0;
-	std::string fileName = formant + std::to_string(counter) + ".png";
-	std::cout << fileName;
-
-
-	//check if there is at least one file
-	if (!FileExists(fileName))
-	{
-		return false;
-	}
-
-	while (FileExists(fileName))
-	{
-		std::cout << "Loading file: " << fileName;
-		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
-		textures.push_back(GLTextureLoader::PushToGPU(bitmap));
-		GLTextureLoader::FreeImageMemory(bitmap);
-		//textures.push_back(GLTextureLoader::LoadTexture(fileName));
-		std::cout << " LOADED" << std::endl;
-		counter++;
-		fileName = formant + std::to_string(counter) + ".png";
-	}
-
-	std::cout << "Loaded " << (counter) << " files." << std::endl;
-	return true;
-}
 
 
 
@@ -93,7 +64,7 @@ int main(int argc, char** args)
 
 	//Read in images
 	std::vector<GLuint> v;
-	if (!ReadInTextures(v, conf->NameBase)) // if there is not a single image file - quit.
+	if (!FastImgLoader::LoadImagesSingleThread(conf->NameBase,v)) // if there is not a single image file - quit.
 	{
 		Renderer::Cleanup();
 		std::cout << "No file(s) found!" << std::endl;
