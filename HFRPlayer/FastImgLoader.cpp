@@ -26,20 +26,16 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 		
 		//std::cout << "Loading file: " << fileName;
 		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
-		//while (!bitmap)
-		{
-			//bitmap = GLTextureLoader::LoadImageRAM(fileName);
-			//cout << "Trying to read: " << fileName << endl;
-		}
-		if (bitmap)
+	
+		if (bitmap == nullptr)
 		{
 			s_ConsoleMutex.lock();
-			cout << "OK: " << fileName << endl;
+			cout << "NULL: " << fileName << endl;
 			s_ConsoleMutex.unlock();
 			
 		}
 		
-		
+		//GLTextureLoader::FreeImageMemory(bitmap);
 		s_Queues[startAtIndex].push(bitmap);
 		s_TestInts[startAtIndex].push(counter);
 
