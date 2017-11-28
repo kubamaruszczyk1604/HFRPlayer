@@ -2,9 +2,12 @@
 #include <thread>
 #include <iostream>
 
-const int FastImgLoader::MAX_THREAD_COUNT{ 8 };
+const int FastImgLoader::MAX_THREAD_COUNT{8};
 int FastImgLoader::s_RunningThreads{ 0 };
+std::vector<std::queue<FIBITMAP*>>FastImgLoader::s_Queues;
+std::vector<std::queue<int>> FastImgLoader::s_TestInts;
 std::mutex FastImgLoader::s_CounterMutex;
+std::mutex FastImgLoader::s_ConsoleMutex;
 
 using namespace std;
 
@@ -14,30 +17,32 @@ FastImgLoader::~FastImgLoader()
 
 
 int tot = 0;
-void FastImgLoader::LoadSequence(const string& formant, int startAtIndex, queue<FIBITMAP*>& outQueue)
+void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 {
-	//cout << "QUEUE: " + to_string(startAtIndex) << " created" << std::endl;
-
 	int counter = startAtIndex;
 	string fileName = formant + std::to_string(counter) + ".png";
-
 	while (FileExists(fileName))
 	{
+		
 		//std::cout << "Loading file: " << fileName;
 		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
-		outQueue.push(bitmap);
+		//while (!bitmap)
+		{
+			//bitmap = GLTextureLoader::LoadImageRAM(fileName);
+			//cout << "Trying to read: " << fileName << endl;
+		}
+		if (bitmap)
+		{
+			s_ConsoleMutex.lock();
+			cout << "OK: " << fileName << endl;
+			s_ConsoleMutex.unlock();
+			
+		}
+		
+		
+		s_Queues[startAtIndex].push(bitmap);
+		s_TestInts[startAtIndex].push(counter);
 
-	//	textures.push_back(GLTextureLoader::PushToGPU(bitmap));
-
-
-		GLTextureLoader::FreeImageMemory(bitmap);
-
-
-
-		//textures.push_back(GLTextureLoader::LoadTexture(fileName));
-
-
-		//std::cout << " LOADED" << std::endl;
 		counter+=MAX_THREAD_COUNT;
 		s_CounterMutex.lock();
 		tot++;
@@ -45,17 +50,15 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex, queue<
 		fileName = formant + std::to_string(counter) + ".png";
 	}
 
-	std::cout << "Loaded all starting at index " << to_string(startAtIndex) << endl;
+	//std::cout << "Loaded all starting at index " << to_string(startAtIndex) << endl;// "Queue size: " << to_string(outQueue.size()) << endl;
 	s_RunningThreads--;
 	
 }
 
 bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 {
-	vector<queue<FIBITMAP*>> queues;
+
 	vector<thread> threads;
-
-
 	string fileName = formant + std::to_string(0) + ".png";
 	cout << fileName << endl;
 
@@ -69,26 +72,66 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 	{
 		if (FileExists(formant + std::to_string(i) + ".png"))
 		{
-			queue<FIBITMAP*> q;
-			queues.push_back(q);
+			
+			
+        	s_Queues.push_back(queue<FIBITMAP*>());
+			s_TestInts.push_back(queue<int>());
 
 			s_RunningThreads++;
-			threads.push_back(thread(LoadSequence, formant, i, q));
-			//LoadSequence(formant, i, q);
+			threads.push_back(thread(LoadSequence, formant, i));
 		}
 	} 
 
-	while (s_RunningThreads){cout << "";} // block until threads are working
+	while (s_RunningThreads) { _sleep(1); } // block until threads are working
 	for(int i=0; i < threads.size();++i) { threads[i].join();} // All done. Join.
 	cout << "Total images loaded: " << tot << endl;
 
 	threads.clear();
 	
-	// PUSH IMAGES TO GPU IN CORRECT ORDER
+	// -> PUSH IMAGES TO GPU IN CORRECT ORDER <-
+
+	/*for (int i = 0; i < s_Queues.size(); ++i)
+	{
+		cout << "Queue: " << to_string(i) << ", size = " << to_string(s_Queues[i].size()) << endl;
+	}*/
+
+	/*std::vector<int> liczby;
+
+    int testIndex = 0;
+	for (int i = 0; i < tot; ++i)
+	{
+	  if (testIndex > (MAX_THREAD_COUNT - 1)) testIndex = 0;
+
+	  int liczba = s_TestInts[testIndex].front();
+	  liczby.push_back(liczba);
+	  s_TestInts[testIndex].pop();
+
+	 
+	  testIndex++;
+
+	}
 
 
+	for (int i = 0; i < liczby.size(); ++i)
+	{
+		cout << "Liczba: " << to_string(liczby[i]) << " ogarnieta" << endl;
+	}*/
 
 
+    int queueIndex = 0;
+	for (int i = 0; i < tot; ++i)
+	{
+		if (queueIndex > (MAX_THREAD_COUNT - 1)) queueIndex = 0;
+		
+		FIBITMAP* bitmap = s_Queues[queueIndex].front();
+		output.push_back(GLTextureLoader::PushToGPU(bitmap));
+		GLTextureLoader::FreeImageMemory(bitmap);
+		s_Queues[queueIndex].pop();
+		queueIndex++;
+
+	}
+
+	cout << "All in" << endl;
 
 }
 
@@ -111,7 +154,6 @@ bool FastImgLoader::LoadImagesSingleThread(const std::string& formant, std::vect
 		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
 		textures.push_back(GLTextureLoader::PushToGPU(bitmap));
 		GLTextureLoader::FreeImageMemory(bitmap);
-		//textures.push_back(GLTextureLoader::LoadTexture(fileName));
 		std::cout << " LOADED" << std::endl;
 		counter++;
 		fileName = formant + std::to_string(counter) + ".png";

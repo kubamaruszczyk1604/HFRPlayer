@@ -10,9 +10,12 @@ class FastImgLoader
 {
 private:
 	static const int MAX_THREAD_COUNT;
-	static void LoadSequence(const std::string& formant, int startAtIndex, std::queue<FIBITMAP*>& outQueue);
+	static void LoadSequence(const std::string& formant, int startAtIndex);
 	static int s_RunningThreads;
+	static std::vector<std::queue<FIBITMAP*>> s_Queues;
+	static std::vector<std::queue<int>> s_TestInts;
 	static std::mutex s_CounterMutex;
+	static std::mutex s_ConsoleMutex;
 
 public:
 	FastImgLoader() = delete;

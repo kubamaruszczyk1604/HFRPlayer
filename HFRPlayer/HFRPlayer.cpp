@@ -61,11 +61,11 @@ int main(int argc, char** args)
 
 	//Read in images
 	std::vector<GLuint> v;
-	FastImgLoader::LoadImages(conf->NameBase, v);
-	int placeholder;
-	std::cin >> placeholder;
-	return 0;
-	if (!FastImgLoader::LoadImagesSingleThread(conf->NameBase,v)) // if there is not a single image file - quit.
+	//FastImgLoader::LoadImages(conf->NameBase, v);
+	//int placeholder;
+	//std::cin >> placeholder;
+	//return 0;
+	if (!FastImgLoader::LoadImages(conf->NameBase,v)) // if there is not a single image file - quit.
 	{
 		Renderer::Cleanup();
 		std::cout << "No file(s) found!" << std::endl;
