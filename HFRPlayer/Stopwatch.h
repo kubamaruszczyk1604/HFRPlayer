@@ -3,8 +3,6 @@
 #include <ctime>
 #include <ratio>
 
-/*Simple stopwatch (based on chrono library) by Kuba Maruszczyk*/
-
 class Stopwatch
 {
 private:
@@ -13,10 +11,10 @@ private:
 	std::chrono::duration<double> m_Elapsed_seconds;
 
 	std::chrono::time_point<std::chrono::high_resolution_clock> m_PauseStart;
-	std::chrono::duration<double > m_Paused_seconds;
+	//std::chrono::duration<double > m_Paused_seconds;
 
 	bool isRunning;
-	bool isPaused;
+	//bool isPaused;
 
 public:
 
@@ -28,8 +26,8 @@ public:
 public:
 	void Start();
 	void Stop();
-	void UnPause();
-	void Pause();
+	//void UnPause();
+	//void Pause();
 	double ElapsedTime()const;
 
 

@@ -6,11 +6,6 @@
 #include <exception>
 
 Stopwatch _BenchmarkTimer;
-//bool FileExists(const std::string& name)
-//{
-//	struct stat buffer;
-//	return (stat(name.c_str(), &buffer) == 0); 
-//}
 
 
 int main(int argc, char** args)
@@ -52,11 +47,10 @@ int main(int argc, char** args)
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
 
-	///////////////  RENDERING STARTS HERE ///////////////////////
-
+	///////////////  IMAGE LOADING AND RENDERING ////////////////
 
 	// Init OpenGL
-	Renderer::Init(800, 600, "FPS", false); // arguments (resX, resY, Title, windowed or  fullscreen)
+	Renderer::Init(800, 600, "FPS", false); 
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
@@ -70,14 +64,17 @@ int main(int argc, char** args)
 	}
 	std::cout << "Images Loading took: " << _BenchmarkTimer.ElapsedTime() << " seconds." << std::endl;
 	_BenchmarkTimer.Stop();
+
 	delete conf;
 	conf = nullptr;
+
 	// Pass images to the renderer
 	Renderer::SetPictures(imagesIDs);
 
 	// Renderer loop(blocking)
 	Renderer::Run();
 
+	std::cout << "Deleting textures..." << std::endl;
 	// free all textures
 	glDeleteTextures(imagesIDs.size(), &imagesIDs[0]);
 
