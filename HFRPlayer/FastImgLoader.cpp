@@ -13,7 +13,7 @@ int FastImgLoader::s_ActiveCount{ 0 };
 using namespace std;
 
 FastImgLoader::~FastImgLoader()
-{
+{//
 }
 int tot = 0;
 void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
