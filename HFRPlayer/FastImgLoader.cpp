@@ -11,7 +11,7 @@ std::mutex FastImgLoader::s_CounterMutex;
 std::mutex FastImgLoader::s_ConsoleMutex;
 int FastImgLoader::s_ActiveCount{ 0 };
 using namespace std;
-//
+
 FastImgLoader::~FastImgLoader()
 {
 }
