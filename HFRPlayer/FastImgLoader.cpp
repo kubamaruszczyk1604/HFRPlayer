@@ -2,7 +2,7 @@
 #include <thread>
 #include <iostream>
 
-const int FastImgLoader::MAX_THREAD_COUNT{8};
+const int FastImgLoader::MAX_THREAD_COUNT{4};
 const int FastImgLoader::BUFFER_SIZE{ 508 };
 int FastImgLoader::s_RunningThreads{ 0 };
 SafeQueue<FIBITMAP*> FastImgLoader::s_Queues[MAX_THREAD_COUNT];
