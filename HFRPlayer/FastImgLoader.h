@@ -13,7 +13,7 @@ private:
 	static const int MAX_THREAD_COUNT;
 	static void LoadSequence(const std::string& formant, int startAtIndex);
 	static int s_RunningThreads;
-	static SafeQueue<FIBITMAP*> s_Queues[8];
+	static SafeQueue<FIBITMAP*> s_Queues[];
 	//static std::vector<SafeQueue<int>> s_TestInts;
 	static std::mutex s_CounterMutex;
 	static std::mutex s_ConsoleMutex;

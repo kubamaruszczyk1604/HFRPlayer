@@ -23,7 +23,7 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 	string fileName = formant + std::to_string(counter) + ".png";
 	while (FileExists(fileName))
 	{	
-		while (s_ActiveCount > 125)
+		while (s_ActiveCount > 500)
 		{
 			_sleep(0);
 		}
@@ -72,7 +72,8 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 		}
 	} 
 
-	_sleep(100);
+	//_sleep(100);
+	
 	
 	// -> PUSH IMAGES TO GPU IN CORRECT ORDER <-
     int queueIndex = 0;
@@ -94,10 +95,10 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 
 	}
 	
-	//while (s_RunningThreads) { _sleep(0); } // block until threads are working 
+	while (s_RunningThreads) { _sleep(0); } // block until threads are working 
 	for (int i = 0; i < threads.size(); ++i) { threads[i].join(); } // All done. Join.
 	cout << "All in" << endl;
-
+	return true;
 }
 
 bool FastImgLoader::LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures)
