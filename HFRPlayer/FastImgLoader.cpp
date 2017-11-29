@@ -3,6 +3,7 @@
 #include <iostream>
 
 const int FastImgLoader::MAX_THREAD_COUNT{8};
+const int FastImgLoader::BUFFER_SIZE{ 508 };
 int FastImgLoader::s_RunningThreads{ 0 };
 SafeQueue<FIBITMAP*> FastImgLoader::s_Queues[MAX_THREAD_COUNT];
 //std::vector<SafeQueue<int>> FastImgLoader::s_TestInts;
@@ -23,18 +24,17 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 	string fileName = formant + std::to_string(counter) + ".png";
 	while (FileExists(fileName))
 	{	
-		while (s_ActiveCount > 500)
+		while (s_ActiveCount > BUFFER_SIZE)
 		{
 			_sleep(0);
 		}
-		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
+		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName); // <- THIS LINE TAKES MOST TIME (about 46%)
 	
 		if (bitmap == nullptr)
 		{
 			s_ConsoleMutex.lock();
-			cout << "ERROR: " << fileName << endl;
+			cout << "ERROR! FAILED TO ALLOCATE: " << fileName << endl;
 			s_ConsoleMutex.unlock();
-			
 		}
 
 		s_Queues[startAtIndex].enqueue(bitmap);
@@ -44,8 +44,6 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 		s_CounterMutex.unlock();
 		fileName = formant + std::to_string(counter) + ".png";
 	}
-
-	//std::cout << "Loaded all starting at index " << to_string(startAtIndex) << endl;// "Queue size: " << to_string(outQueue.size()) << endl;
 	s_RunningThreads--;
 	
 }
@@ -53,16 +51,13 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 {
 
-	vector<thread> threads;
 	string fileName = formant + std::to_string(0) + ".png";
 	cout << "Starting from file: " << fileName << endl;
-
-
-	// DECODE AND LOAD INTO SYSTEM MEMORY
-
 	//check if there is at least one file
 	if (!FileExists(fileName)) return false;
 
+	// DECODE AND LOAD INTO SYSTEM MEMORY
+	vector<thread> threads;
 	for (int i = 0; i < MAX_THREAD_COUNT; ++i)
 	{
 		if (FileExists(formant + std::to_string(i) + ".png"))
@@ -71,13 +66,11 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 			threads.push_back(thread(LoadSequence, formant, i));
 		}
 	} 
+	_sleep(100);
 
-	//_sleep(100);
-	
-	
 	// -> PUSH IMAGES TO GPU IN CORRECT ORDER <-
     int queueIndex = 0;
-	for (int i = 0; i < 508; ++i)
+	for (int i = 0; i < 508; ++i)// TODO: image number to be auto-detected (or read from config altenatively)
 	{
 		if (queueIndex > (MAX_THREAD_COUNT - 1)) queueIndex = 0;
 		
@@ -92,12 +85,11 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 		s_ActiveCount--;
 		s_CounterMutex.unlock();
 		queueIndex++;
-
 	}
 	
-	while (s_RunningThreads) { _sleep(0); } // block until threads are working 
+	//while (s_RunningThreads) { _sleep(0); } // block until threads are working 
 	for (int i = 0; i < threads.size(); ++i) { threads[i].join(); } // All done. Join.
-	cout << "All in" << endl;
+	cout << "Reading finished." << endl;
 	return true;
 }
 
@@ -106,13 +98,8 @@ bool FastImgLoader::LoadImagesSingleThread(const std::string& formant, std::vect
 	unsigned counter = 0;
 	string fileName = formant + std::to_string(counter) + ".png";
 	cout << fileName;
-
-
 	//check if there is at least one file
-	if (!FileExists(fileName))
-	{
-		return false;
-	}
+	if (!FileExists(fileName)) { return false;}
 
 	while (FileExists(fileName))
 	{

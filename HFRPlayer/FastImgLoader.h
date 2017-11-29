@@ -11,13 +11,17 @@ class FastImgLoader
 {
 private:
 	static const int MAX_THREAD_COUNT;
-	static void LoadSequence(const std::string& formant, int startAtIndex);
+
+	/*PREFERED BUFFER SIZE VARIES WITH BUILD CONFIGURATION (x32, x64) AS DIFFERENT AMOUNT OF SYSTEM MEMORY IS GIVEN TO A PROCESS IN EACH CASE*/
+	static const int BUFFER_SIZE; 
+
 	static int s_RunningThreads;
 	static SafeQueue<FIBITMAP*> s_Queues[];
-	//static std::vector<SafeQueue<int>> s_TestInts;
 	static std::mutex s_CounterMutex;
 	static std::mutex s_ConsoleMutex;
 	static int s_ActiveCount;
+
+	static void LoadSequence(const std::string& formant, int startAtIndex);
 
 public:
 	FastImgLoader() = delete;

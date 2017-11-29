@@ -5,7 +5,7 @@
 #include "ConfigReader.h"
 #include <exception>
 
-
+Stopwatch _BenchmarkTimer;
 //bool FileExists(const std::string& name)
 //{
 //	struct stat buffer;
@@ -60,27 +60,26 @@ int main(int argc, char** args)
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
-	std::vector<GLuint> v;
-	//FastImgLoader::LoadImages(conf->NameBase, v);
-	//int placeholder;
-	//std::cin >> placeholder;
-	//return 0;
-	if (!FastImgLoader::LoadImages(conf->NameBase,v)) // if there is not a single image file - quit.
+	std::vector<GLuint> imagesIDs;
+	_BenchmarkTimer.Start();
+	if (!FastImgLoader::LoadImages(conf->NameBase,imagesIDs)) // if there is not a single image file - quit.
 	{
 		Renderer::Cleanup();
 		std::cout << "No file(s) found!" << std::endl;
 		return 0;
 	}
+	std::cout << "Images Loading took: " << _BenchmarkTimer.ElapsedTime() << " seconds." << std::endl;
+	_BenchmarkTimer.Stop();
 	delete conf;
 	conf = nullptr;
 	// Pass images to the renderer
-	Renderer::SetPictures(v);
+	Renderer::SetPictures(imagesIDs);
 
 	// Renderer loop(blocking)
 	Renderer::Run();
 
 	// free all textures
-	glDeleteTextures(v.size(), &v[0]);
+	glDeleteTextures(imagesIDs.size(), &imagesIDs[0]);
 
 
 	return 0;
