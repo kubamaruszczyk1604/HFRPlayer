@@ -4,6 +4,8 @@
 
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
+float Renderer::s_GlobalTime{ 0 };
+bool Renderer::s_GlobalTimeThreadRunningFlag{ true };
 
 Stopwatch Renderer::s_FpsCountTimer;
 Stopwatch Renderer::s_FpsLimiter;
@@ -19,6 +21,7 @@ Networking::ExperimentSocketStream* Renderer::s_activeConnection = nullptr;
 
 Mesh*  Renderer::s_QuadMesh;
 ShaderProgram* Renderer::s_PicturesShader;
+ShaderProgram* Renderer::s_LoadingShader;
 
 GLuint Renderer::s_LoadingScrTexID{ 0 };
 GLuint Renderer::s_ReadyScrTexID{ 0 };
@@ -58,6 +61,17 @@ void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int pr
 }
 
 
+void Renderer::TimeIncrementFunction()
+{
+	Stopwatch s_TimeDeltaSW;
+	s_TimeDeltaSW.Start();
+	while (s_GlobalTimeThreadRunningFlag)
+	{
+		s_GlobalTime = s_TimeDeltaSW.ElapsedTime();	
+	}
+	s_TimeDeltaSW.Stop();
+}
+
 std::string Renderer::GenVertexShader()
 {
 	std::string vertexShader = "#version 330\n\n";
@@ -76,8 +90,21 @@ std::string Renderer::GenFragmentShader()
 	fragmentShader += "in vec2 oUVs;\n\n";
 	fragmentShader += "out vec4 FragColour;\n\n";
 	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
+	fragmentShader += "uniform float time;\n\n";
 	fragmentShader += "void main()\n{\n";
 	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
+	return fragmentShader;
+}
+
+std::string Renderer::GenLoadingFragShader()
+{
+	std::string fragmentShader = "#version 330\n\n";
+	fragmentShader += "in vec2 oUVs;\n\n";
+	fragmentShader += "out vec4 FragColour;\n\n";
+	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
+	fragmentShader += "uniform float time;\n\n";
+	fragmentShader += "void main()\n{\n";
+	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs)*(0.5+abs(sin(time)));\n}\n";
 	return fragmentShader;
 }
 
@@ -171,6 +198,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
 	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
+	s_LoadingShader = new ShaderProgram(GenVertexShader(), GenLoadingFragShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
 		//GL UVs ORDERING
@@ -197,17 +225,16 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 
 void Renderer::Run()
 {
+	std::thread globalTimeThread(TimeIncrementFunction);
 
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
-
 	// main loop
 	do
 	{
-			
 		//render loop
 		if (s_RendererState == RendererState::Playing)
 		{
@@ -247,6 +274,10 @@ void Renderer::Run()
 
 		else if(s_RendererState == RendererState::Loading)
 		{
+			
+			s_LoadingShader->SetAsCurrent();
+			GLuint loc = glGetUniformLocation(s_LoadingShader->GetID(), "time");
+			glUniform1f(loc, 1.0);
 			LoadSet(s_Name);	
 
 			// flush events that happened while loading
@@ -257,6 +288,8 @@ void Renderer::Run()
 		}
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
+			s_PicturesShader->SetAsCurrent();
+			
 			DisplayWaitForUserScreen();
 			sizeCached = s_Pictures.size();
 			s_CurrentIndex = 0;
@@ -265,12 +298,14 @@ void Renderer::Run()
 			previousDispTime = std::chrono::high_resolution_clock::now();
 			currTime = std::chrono::high_resolution_clock::time_point();
 			glfwPollEvents();
+			
 		}
 
 
 	} while (!glfwWindowShouldClose(s_GLWindow));
 
-
+	s_GlobalTimeThreadRunningFlag = false;
+	globalTimeThread.join();
 	glfwDestroyWindow(s_GLWindow);
 	glfwTerminate();
 }

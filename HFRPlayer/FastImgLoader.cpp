@@ -89,6 +89,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 		s_CounterMutex.unlock();
 		queueIndex++;
 		totalConsumed++;
+		glfwPollEvents();
 	}
 	
 	//while (s_RunningThreads) { _sleep(0); } // block until threads are working 

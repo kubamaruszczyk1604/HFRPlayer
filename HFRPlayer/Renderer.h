@@ -25,6 +25,7 @@ private:
 	static Stopwatch s_FpsCountTimer;
 	static Mesh* s_QuadMesh;
 	static ShaderProgram* s_PicturesShader;
+	static ShaderProgram* s_LoadingShader;
 
 	static Stopwatch s_FpsLimiter;
 	static uint32_t s_framePhase;
@@ -41,11 +42,14 @@ private:
 
 	static std::string s_Name;
 
-
+	static float s_GlobalTime;
+	static bool s_GlobalTimeThreadRunningFlag;
 private:
-
+	
+	static void TimeIncrementFunction();
 	static std::string GenVertexShader();
 	static std::string GenFragmentShader();
+	static std::string GenLoadingFragShader();
 	static void LoadInterfaceTextures();
 	static void DisplayLoadingScreen();
 	static void DisplayWaitForUserScreen();
