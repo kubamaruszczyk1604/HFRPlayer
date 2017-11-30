@@ -32,7 +32,15 @@ public:
 
 	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output);
 	static bool LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures);
-	static bool FileExists(const std::string& name);
+
+	inline static bool FileExists(const std::string& name)
+	{
+		
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0);
+		
+
+	}
 
 };
 

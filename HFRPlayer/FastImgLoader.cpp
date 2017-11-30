@@ -7,7 +7,6 @@ const int FastImgLoader::MAX_THREAD_COUNT{4};
 const int FastImgLoader::BUFFER_SIZE{ 508 };
 int FastImgLoader::s_RunningThreads{ 0 };
 SafeQueue<FIBITMAP*> FastImgLoader::s_Queues[MAX_THREAD_COUNT];
-//std::vector<SafeQueue<int>> FastImgLoader::s_TestInts;
 std::mutex FastImgLoader::s_CounterMutex;
 std::mutex FastImgLoader::s_ConsoleMutex;
 std::mutex FastImgLoader::s_ThreadCountMutex;
@@ -15,7 +14,7 @@ int FastImgLoader::s_BufferItemCount{ 0 };
 using namespace std;
 
 FastImgLoader::~FastImgLoader()
-{//
+{
 }
 int tot = 0;
 void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
@@ -24,12 +23,12 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 	string fileName = formant + std::to_string(counter) + ".png";
 	while (FileExists(fileName))
 	{	
-		while (s_BufferItemCount > BUFFER_SIZE)
+		while (s_BufferItemCount > BUFFER_SIZE) // this is to prevent buffer overflow. Gives consumer time to process items in the queues
 		{
 			_sleep(0);
 		}
 		FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName); // <- THIS LINE TAKES MOST TIME (about 46%)
-	
+
 		if (bitmap == nullptr)
 		{
 			s_ConsoleMutex.lock();
@@ -54,6 +53,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 
 	string fileName = formant + std::to_string(0) + ".png";
 	cout << "Starting from file: " << fileName << endl;
+
 	//check if there is at least one file
 	if (!FileExists(fileName)) return false;
 
@@ -69,7 +69,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 			threads.push_back(thread(LoadSequence, formant, i));
 		}
 	} 
-	_sleep(100);
+	_sleep(10);
 	int totalConsumed = 0;
 	// -> PUSH IMAGES TO GPU IN CORRECT ORDER <-  --- CONSUMER LOOP ---
     int queueIndex = 0;
@@ -120,8 +120,3 @@ bool FastImgLoader::LoadImagesSingleThread(const std::string& formant, std::vect
 	return true;
 }
 
-bool FastImgLoader::FileExists(const std::string & name)
-{
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
-}
