@@ -34,7 +34,11 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 {
 	if (action ==  GLFW_PRESS)
 	{
-		if (key == GLFW_KEY_ESCAPE) LoadTextures(s_Name);
+		if (key == GLFW_KEY_ESCAPE) { LoadTextures(s_Name); }// test reload
+		else if (key == GLFW_KEY_ENTER)
+		{
+			if (s_RendererState == RendererState::WaitingForUser) s_RendererState = RendererState::Playing;
+		}
 			//glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
@@ -84,7 +88,14 @@ void Renderer::DisplayLoadingScreen()
 	glfwSwapBuffers(s_GLWindow);
 }
 
-bool Renderer::LoadNewSet(const std::string & name)
+void Renderer::DisplayWaitForUserScreen()
+{
+	glBindTexture(GL_TEXTURE_2D, s_ReadyScrTexID);
+	s_QuadMesh->Draw();
+	glfwSwapBuffers(s_GLWindow);
+}
+
+bool Renderer::LoadSet(const std::string & name)
 {
 	DisplayLoadingScreen();
 	std::cout << "Deleting textures..." << std::endl;
@@ -94,18 +105,10 @@ bool Renderer::LoadNewSet(const std::string & name)
 	return 0;
 }
 
-void Renderer::SetPictures(GLuint* IDs, int count)
-{
-	s_Pictures = std::vector<GLuint>(IDs, IDs + count);
-}
-
-void Renderer::SetPictures(std::vector<GLuint>& IDs)
-{
-	s_Pictures = IDs;
-}
 
 void Renderer::LoadTextures(const std::string & name)
 {
+	if (s_RendererState == RendererState::Loading) return;
 	s_Name = name;
 	s_RendererState = RendererState::Loading;
 
@@ -177,30 +180,25 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glUniform1i(samplerID, 0);
 	glActiveTexture(GL_TEXTURE0);
 	s_PicturesShader->SetAsCurrent();
-
-
 	LoadInterfaceTextures();
-	//DisplayLoadingScreen();
+
 	
 }
 
 void Renderer::Run()
 {
 
-	//LoadNewSet(s_Name);
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
-
-
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
 
-	//render loop
+	// main loop
 	do
 	{
 			
-		// draw
+		//render loop
 		if (s_RendererState == RendererState::Playing)
 		{
 			if (s_framePhase >= s_frameRepeatCount)
@@ -239,18 +237,22 @@ void Renderer::Run()
 
 		else if(s_RendererState == RendererState::Loading)
 		{
-			LoadNewSet(s_Name);	
+			LoadSet(s_Name);			
+			s_RendererState = RendererState::WaitingForUser;
+			
+		}
+		else if (s_RendererState == RendererState::WaitingForUser)
+		{
+			DisplayWaitForUserScreen();
 			sizeCached = s_Pictures.size();
 			s_CurrentIndex = 0;
-			s_RendererState = RendererState::Playing;
 			s_FpsCountTimer.Start();
 			s_FpsLimiter.Start();
 			previousDispTime = std::chrono::high_resolution_clock::now();
 			currTime = std::chrono::high_resolution_clock::time_point();
-			
-
+			glfwPollEvents();
 		}
-		
+
 
 	} while (!glfwWindowShouldClose(s_GLWindow));
 

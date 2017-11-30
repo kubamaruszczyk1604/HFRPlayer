@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "Mesh.h"
-
 #include "ShaderProgram.h"
 #include "Stopwatch.h"
 #include "FastImgLoader.h"
@@ -47,15 +46,18 @@ private:
 	static std::string GenFragmentShader();
 	static void LoadInterfaceTextures();
 	static void DisplayLoadingScreen();
-	static bool LoadNewSet(const std::string& name);
+	static void DisplayWaitForUserScreen();
+	static bool LoadSet(const std::string& name); //Internal, non thread-safe
 
 public:
-	static void SetPictures(GLuint* IDs, int count);
-	static void SetPictures(std::vector<GLuint>& IDs);
+
+	// Please use this method to load new set of textures.
 	static void LoadTextures(const std::string& name);
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
+
+
 
 	//  Class intended as static
 	Renderer() = delete;
