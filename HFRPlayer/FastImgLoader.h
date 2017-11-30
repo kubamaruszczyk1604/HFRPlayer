@@ -19,7 +19,8 @@ private:
 	static SafeQueue<FIBITMAP*> s_Queues[];
 	static std::mutex s_CounterMutex;
 	static std::mutex s_ConsoleMutex;
-	static int s_ActiveCount;
+	static std::mutex s_ThreadCountMutex;
+	static int s_BufferItemCount;
 
 	static void LoadSequence(const std::string& formant, int startAtIndex);
 
