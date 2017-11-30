@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Networking">
+      <UniqueIdentifier>{29dd1f56-74e2-4e40-81d1-07d3b061af85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking\Header Files">
+      <UniqueIdentifier>{341f84fb-6d6f-427f-952c-1fb07144d714}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Networking\Source Files">
+      <UniqueIdentifier>{0a24d97d-6cdf-41f4-b108-ce2e3204eb3e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -52,6 +61,15 @@
     <ClInclude Include="FastImgLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SocketConnection.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExperimentSocketStream.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ExperimentSocketManager.h">
+      <Filter>Networking\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -83,6 +101,12 @@
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SocketConnection.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ExperimentSocketStream.cpp">
+      <Filter>Networking\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
