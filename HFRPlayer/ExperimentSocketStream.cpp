@@ -1,5 +1,7 @@
 #include "ExperimentSocketStream.h"
 
+#include "Renderer.h"
+
 #include <sstream>
 #include <string>
 #include <iostream>
@@ -51,25 +53,29 @@ void ExperimentSocketStream::receiveLoop()
 	std::ostringstream stringBuff;
 
 
-	int res = 0;
+	int res = 1;
 	while (!m_shouldClose)
 	{
-		while (res >= 0)
+		while (res > 0)
 		{
 			res = m_socket->recv(&charBuff, 1, 0);
-			if (charBuff != '#')
+
+			if (res > 0)
 			{
-				// new character
-				stringBuff << charBuff;
-			}
-			else
-			{
-				// string terminated
-				break;
+				if (charBuff != '#')
+				{
+					// new character
+					stringBuff << charBuff;
+				}
+				else
+				{
+					// string terminated
+					break;
+				}
 			}
 		}
 
-		if (res < 0)
+		if (res <= 0)
 		{
 			// error
 			int error = WSAGetLastError();
@@ -79,10 +85,11 @@ void ExperimentSocketStream::receiveLoop()
 		else
 		{
 			// full string loaded
-			std::cout << "received string: " << stringBuff.str() << std::endl;
+			std::cout << "received string from Matlab" << std::endl;
+			Renderer::LoadTextures(stringBuff.str(), this);
+			stringBuff.str("");
 			stringBuff.clear();
 			charBuff = 0;
-			// TODO: notify RENDERER
 		}
 	}
 }

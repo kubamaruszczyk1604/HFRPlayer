@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "ExperimentSocketStream.h"
+
 #include "Mesh.h"
 #include "ShaderProgram.h"
 #include "Stopwatch.h"
@@ -49,10 +51,12 @@ private:
 	static void DisplayWaitForUserScreen();
 	static bool LoadSet(const std::string& name); //Internal, non thread-safe
 
+	static Networking::ExperimentSocketStream* s_activeConnection;
+
 public:
 
-	// Please use this method to load new set of textures.
-	static void LoadTextures(const std::string& name);
+	// Please use this method to load new set of textures. optional socket indicates the network connection which initiates the load
+	static void LoadTextures(const std::string& name, Networking::ExperimentSocketStream* throughConnection = nullptr);
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();

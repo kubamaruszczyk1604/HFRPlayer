@@ -14,6 +14,7 @@ RendererState Renderer::s_RendererState{ RendererState::Playing };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
 unsigned Renderer::s_FrameCounter{ 0 };
+Networking::ExperimentSocketStream* Renderer::s_activeConnection = nullptr;
 
 
 Mesh*  Renderer::s_QuadMesh;
@@ -38,6 +39,11 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 		else if (key == GLFW_KEY_ENTER)
 		{
 			if (s_RendererState == RendererState::WaitingForUser) s_RendererState = RendererState::Playing;
+		}
+		else if (s_activeConnection)
+		{ 
+			// should we remap the weird glfw to standard Win VK?
+			s_activeConnection->write((char)key);
 		}
 			//glfwSetWindowShouldClose(window, GL_TRUE);
 	}
@@ -106,12 +112,16 @@ bool Renderer::LoadSet(const std::string & name)
 }
 
 
-void Renderer::LoadTextures(const std::string & name)
+void Renderer::LoadTextures(const std::string & name, Networking::ExperimentSocketStream* connection)
 {
 	if (s_RendererState == RendererState::Loading) return;
 	s_Name = name;
 	s_RendererState = RendererState::Loading;
 
+	if (connection)
+	{
+		s_activeConnection = connection;
+	}
 }
 
 void Renderer::SetFPS(float fps)
@@ -237,7 +247,11 @@ void Renderer::Run()
 
 		else if(s_RendererState == RendererState::Loading)
 		{
-			LoadSet(s_Name);			
+			LoadSet(s_Name);	
+
+			// flush events that happened while loading
+			glfwPollEvents();
+
 			s_RendererState = RendererState::WaitingForUser;
 			
 		}
