@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigReader.cpp" />
+    <ClCompile Include="ExperimentSocketManager.cpp" />
     <ClCompile Include="ExperimentSocketStream.cpp" />
     <ClCompile Include="FastImgLoader.cpp" />
     <ClCompile Include="GLTextureLoader.cpp" />

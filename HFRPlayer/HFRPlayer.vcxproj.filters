@@ -108,5 +108,8 @@
     <ClCompile Include="ExperimentSocketStream.cpp">
       <Filter>Networking\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ExperimentSocketManager.cpp">
+      <Filter>Networking\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

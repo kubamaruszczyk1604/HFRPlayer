@@ -7,10 +7,14 @@
 using namespace Networking;
 
 ExperimentSocketStream::ExperimentSocketStream(SocketConnection * socket) :
-	m_socket(socket)
+	m_socket(socket),
+	m_shouldClose(false)
 {
 	m_receiveThread = new std::thread(&ExperimentSocketStream::receiveLoop, this);
 	m_sendThread = new std::thread(&ExperimentSocketStream::sendLoop, this);
+
+	// issue welcome character
+	this->write('W');
 }
 
 ExperimentSocketStream::~ExperimentSocketStream()
@@ -77,6 +81,7 @@ void ExperimentSocketStream::receiveLoop()
 			// full string loaded
 			std::cout << "received string: " << stringBuff.str() << std::endl;
 			stringBuff.clear();
+			charBuff = 0;
 			// TODO: notify RENDERER
 		}
 	}

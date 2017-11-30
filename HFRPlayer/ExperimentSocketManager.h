@@ -40,17 +40,6 @@ namespace Networking
 
 		// thread and loop for accepting new connections. These are immediately wrapped by an ExperimentSocketStream object
 		static std::thread* s_acceptThread;
-		static void acceptLoop()
-		{
-			bool shouldQuit = false;
-			while (!shouldQuit)
-			{
-				auto socket = s_serverSocket->accept();
-				if (socket)
-				{
-					s_activeSockets.push_back(new ExperimentSocketStream(socket));
-				}
-			}
-		}
+		static void acceptLoop();
 	};
 }
