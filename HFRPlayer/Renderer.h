@@ -23,7 +23,7 @@ private:
 
 	static Stopwatch s_FpsLimiter;
 	static uint32_t s_framePhase;
-	static float s_TargetFrameTime;
+	static uint64_t s_TargetFrameTime;
 	static uint32_t s_frameRepeatCount;
 
 	static bool s_Running;
