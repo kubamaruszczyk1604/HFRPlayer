@@ -42,7 +42,7 @@ private:
 	static std::string GenVertexShader();
 	static std::string GenFragmentShader();
 	static void LoadInterfaceTextures();
-
+	static bool LoadNewSet(const std::string& name);
 
 public:
 	static void SetPictures(GLuint* IDs, int count);

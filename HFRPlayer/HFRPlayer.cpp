@@ -83,8 +83,7 @@ int main(int argc, char** args)
 	std::cout << "Deleting textures..." << std::endl;
 	// free all textures
 	glDeleteTextures(imagesIDs.size(), &imagesIDs[0]);
-
-
+   
 	return 0;
 }
 

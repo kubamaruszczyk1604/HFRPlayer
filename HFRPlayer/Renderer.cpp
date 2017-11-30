@@ -71,8 +71,13 @@ std::string Renderer::GenFragmentShader()
 
 void Renderer::LoadInterfaceTextures()
 {
-	s_LoadingScrTexID = GLTextureLoader::LoadTexture("c:/test/loading_screen.png");
-	s_ReadyScrTexID = GLTextureLoader::LoadTexture("");
+	s_LoadingScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/loading_screen.png");
+	s_ReadyScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/player_ready.png");
+}
+
+bool Renderer::LoadNewSet(const std::string & name)
+{
+	
 }
 
 void Renderer::SetPictures(GLuint* IDs, int count)
@@ -180,25 +185,27 @@ void Renderer::Run()
 	//render loop
 	do
 	{
-		if (s_framePhase >= s_frameRepeatCount)
-		{
-			s_CurrentIndex++;
-			if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
-			s_framePhase = 1;
-		}
-		else
-		{
-			s_framePhase++;
-		}
+		
 		
 		// draw
 		if (s_RendererState == RendererState::Playing)
 		{
+			if (s_framePhase >= s_frameRepeatCount)
+			{
+				s_CurrentIndex++;
+				if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
+				s_framePhase = 1;
+			}
+			else
+			{
+				s_framePhase++;
+			}
 			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
 		}
+
 		else if(s_RendererState == RendererState::Loading)
 		{
-			//glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+			glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
 		}
 		s_QuadMesh->Draw();
 

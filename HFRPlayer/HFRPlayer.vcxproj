@@ -154,7 +154,11 @@
       <AdditionalDependencies>opengl32.lib;glu32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)FreeImg\w64\FreeImage.dll" "$(TargetDir)"</Command>
+      <Command>copy "$(SolutionDir)FreeImg\w64\FreeImage.dll" "$(TargetDir)"
+copy "$(SolutionDir)HFRPlayer\config.txt" "$(TargetDir)"
+md  "$(TargetDir)InterfaceImages"
+copy "$(SolutionDir)HFRPlayer\InterfaceImages\loading_screen.png" "$(TargetDir)InterfaceImages"
+copy "$(SolutionDir)HFRPlayer\InterfaceImages\player_ready.png" "$(TargetDir)InterfaceImages"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
