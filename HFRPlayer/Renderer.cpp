@@ -1,5 +1,7 @@
 #include "Renderer.h"
-#include "Model.h"
+
+#include "ShaderProgram.h"
+#include <iostream>
 
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
@@ -43,7 +45,6 @@ std::string Renderer::GenVertexShader()
 {
 	std::string vertexShader = "#version 330\n\n";
 	vertexShader += "layout(location = 0) in vec3 vertex_position;\n";
-	vertexShader += "layout(location = 1) in vec3 vertex_normal;\n";
 	vertexShader += "layout(location = 2) in vec2 uvs;\n\n";
 	vertexShader += "out vec2 oUVs;\n\n";
 	vertexShader += "void main()\n{\n";
@@ -97,7 +98,6 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
-	//glfwWindowHint(GLFW_SAMPLES, 4); 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	if(fullScreen)
@@ -128,16 +128,9 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 
 void Renderer::Run()
 {
-	//glEnable(GL_DEPTH_TEST);
-	//ShaderProgram* sp = new ShaderProgram("C:/Test/glVert.txt", "c:/Test/glFrag.txt",ShaderStringType::Path);
 	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
-		//Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
-		//Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
-		//Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
-		//Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
-
 		//GL UVs ORDERING
 		Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
 		Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
@@ -151,11 +144,9 @@ void Renderer::Run()
 	int indices[] = { 0,1,2,0,2,3 };
 	mesh->CreateIndexBuffer(indices, 6);
 
-	//Model* model = new Model(sp, mesh);
 	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texID2);
 
 	unsigned sizeCached = s_Pictures.size();
 
