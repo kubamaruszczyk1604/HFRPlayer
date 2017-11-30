@@ -1,7 +1,5 @@
 #include "Renderer.h"
 #include "FastImgLoader.h"
-
-#include "ShaderProgram.h"
 #include <iostream>
 
 
@@ -128,7 +126,6 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwMakeContextCurrent(s_GLWindow);
 	glfwSwapInterval(1);
 
-	//GLEW  stuff init
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
@@ -138,9 +135,8 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
 
-void Renderer::Run()
-{
-	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
+
+	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
 		//GL UVs ORDERING
@@ -156,11 +152,10 @@ void Renderer::Run()
 	int indices[] = { 0,1,2,0,2,3 };
 	s_QuadMesh->CreateIndexBuffer(indices, 6);
 
-	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
-	glUniform1i(samplerID, 0);//loc, value
+	GLuint samplerID = glGetUniformLocation(s_PicturesShader->GetID(), "SCT_TEXTURE2D_0"); 
+	glUniform1i(samplerID, 0);
 	glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, samplerID);
-	s_PicturesShader->SetAsCurrent();//Shader
+	s_PicturesShader->SetAsCurrent();
 	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
 	s_QuadMesh->Draw();
 }

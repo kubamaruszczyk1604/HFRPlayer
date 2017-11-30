@@ -55,7 +55,7 @@ int main(int argc, char** args)
 	///////////////  IMAGE LOADING AND RENDERING ////////////////
 
 	// Init OpenGL
-	Renderer::Init(256, 144, "FPS", false); 
+	Renderer::Init(800, 600, "FPS", false); 
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images

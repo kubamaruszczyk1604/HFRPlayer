@@ -6,7 +6,7 @@
 
 #include "Mesh.h"
 
-
+#include "ShaderProgram.h"
 #include "Stopwatch.h"
 enum class RendererState {Playing = 0, Loading = 1, WaitingForUser = 2 };
 class Renderer
