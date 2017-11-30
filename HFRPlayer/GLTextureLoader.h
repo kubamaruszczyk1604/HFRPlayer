@@ -20,6 +20,9 @@ public:
 	GLTextureLoader(const GLTextureLoader&) = delete;
 
 	static GLuint LoadTexture(const std::string& path);
+	static FIBITMAP* LoadImageRAM(const std::string& path);
+	static GLuint PushToGPU(FIBITMAP* image);
+	static void FreeImageMemory(FIBITMAP*& image);
 
 };
 

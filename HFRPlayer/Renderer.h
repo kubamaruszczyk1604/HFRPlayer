@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "Model.h"
-#include "GLTextureLoader.h"
+//#include "GLTextureLoader.h"
 #include "Stopwatch.h"
 
 class Renderer

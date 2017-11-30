@@ -210,3 +210,5 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/HFRPlayer.VC.db
+/HFRPlayer.VC.VC.opendb

@@ -1,45 +1,11 @@
 // MAIN ENTRY HERE 
 
-#include <sys/stat.h>
 #include "Renderer.h"
+#include "FastImgLoader.h"
 #include "ConfigReader.h"
 #include <exception>
 
-
-bool FileExists(const std::string& name)
-{
-	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0); //
-}
-
-
-bool ReadInTextures(std::vector<GLuint>& textures, const std::string& formant)
-{
-	unsigned counter = 0;
-	std::string fileName = formant + std::to_string(counter) + ".png";
-	std::cout << fileName;
-
-
-	//check if there is at least one file
-	if (!FileExists(fileName))
-	{
-		return false;
-	}
-
-	while (FileExists(fileName))
-	{
-		std::cout << "Loading file: " << fileName;
-		textures.push_back(GLTextureLoader::LoadTexture(fileName));
-		std::cout << " LOADED" << std::endl;
-		counter++;
-		fileName = formant + std::to_string(counter) + ".png";
-	}
-
-	std::cout << "Loaded " << (counter) << " files." << std::endl;
-	return true;
-}
-
-
+Stopwatch _BenchmarkTimer;
 
 
 int main(int argc, char** args)
@@ -81,31 +47,36 @@ int main(int argc, char** args)
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
 
-	///////////////  RENDERING STARTS HERE ///////////////////////
-
+	///////////////  IMAGE LOADING AND RENDERING ////////////////
 
 	// Init OpenGL
-	Renderer::Init(2560, 1440, "FPS", true); // arguments (resX, resY, Title, windowed or  fullscreen)
+	Renderer::Init(800, 600, "FPS", false); 
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
-	std::vector<GLuint> v;
-	if (!ReadInTextures(v, conf->NameBase)) // if there is not a single image file - quit.
+	std::vector<GLuint> imagesIDs;
+	_BenchmarkTimer.Start();
+	if (!FastImgLoader::LoadImages(conf->NameBase,imagesIDs)) // if there is not a single image file - quit.
 	{
 		Renderer::Cleanup();
 		std::cout << "No file(s) found!" << std::endl;
 		return 0;
 	}
+	std::cout << "Images Loading took: " << _BenchmarkTimer.ElapsedTime() << " seconds." << std::endl;
+	_BenchmarkTimer.Stop();
+
 	delete conf;
 	conf = nullptr;
+
 	// Pass images to the renderer
-	Renderer::SetPictures(v);
+	Renderer::SetPictures(imagesIDs);
 
 	// Renderer loop(blocking)
 	Renderer::Run();
 
+	std::cout << "Deleting textures..." << std::endl;
 	// free all textures
-	glDeleteTextures(v.size(), &v[0]);
+	glDeleteTextures(imagesIDs.size(), &imagesIDs[0]);
 
 
 	return 0;
