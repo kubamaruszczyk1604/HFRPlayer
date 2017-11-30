@@ -58,7 +58,6 @@ int main(int argc, char** args)
 	_BenchmarkTimer.Start();
 	if (!FastImgLoader::LoadImages(conf->NameBase,imagesIDs)) // if there is not a single image file - quit.
 	{
-		Renderer::Cleanup();
 		std::cout << "No file(s) found!" << std::endl;
 		return 0;
 	}

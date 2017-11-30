@@ -7,12 +7,11 @@
 #include "Model.h"
 //#include "GLTextureLoader.h"
 #include "Stopwatch.h"
-
+enum class RendererState {Playing = 0, Loading = 1, WaitingForUser = 2 };
 class Renderer
 {
 private:
 	static GLFWwindow* s_GLWindow;
-
 	//callbacks
 	static void Error_callback(int error, const char* description);
 	static void Key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -20,21 +19,28 @@ private:
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
 	static Stopwatch s_FpsCountTimer;
+	static Mesh* s_QuadMesh;
+	static ShaderProgram* s_PicturesShader;
 
 	static Stopwatch s_FpsLimiter;
 	static uint32_t s_framePhase;
 	static float s_TargetFrameTime;
 	static uint32_t s_frameRepeatCount;
 
-	static bool s_Running;
+	static RendererState s_RendererState;
 	static std::vector<GLuint> s_Pictures;
 	static unsigned s_CurrentIndex;
 	static unsigned s_FrameCounter;
+
+	static GLuint s_LoadingScrTexID;
+	static GLuint s_ReadyScrTexID;
+
 
 private:
 
 	static std::string GenVertexShader();
 	static std::string GenFragmentShader();
+	static void LoadInterfaceTextures();
 
 
 public:
@@ -43,7 +49,6 @@ public:
 	static void SetFPS(float fps);
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
-	static void Cleanup();
 
 	//  Class intended as static
 	Renderer() = delete;

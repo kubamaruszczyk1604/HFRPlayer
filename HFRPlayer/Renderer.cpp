@@ -1,6 +1,6 @@
 #include "Renderer.h"
 #include "Model.h"
-
+#include "FastImgLoader.h"
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 
@@ -9,11 +9,17 @@ Stopwatch Renderer::s_FpsLimiter;
 float Renderer::s_TargetFrameTime {1.0f/120.0f};
 uint32_t Renderer::s_frameRepeatCount{ 1 };
 uint32_t Renderer::s_framePhase{ 1 };
-bool Renderer::s_Running{ true };
+RendererState Renderer::s_RendererState{ RendererState::Playing };
 std::vector<GLuint> Renderer::s_Pictures;
 unsigned Renderer::s_CurrentIndex{ 0 };
 unsigned Renderer::s_FrameCounter{ 0 };
 
+
+Mesh*  Renderer::s_QuadMesh;
+ShaderProgram* Renderer::s_PicturesShader;
+
+GLuint Renderer::s_LoadingScrTexID{ 0 };
+GLuint Renderer::s_ReadyScrTexID{ 0 };
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -65,6 +71,12 @@ std::string Renderer::GenFragmentShader()
 	fragmentShader += "void main()\n{\n";
 	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
 	return fragmentShader;
+}
+
+void Renderer::LoadInterfaceTextures()
+{
+	//s_LoadingScrTexID = GLTextureLoader::LoadTexture("");
+	//s_ReadyScrTexID = GLTextureLoader::LoadTexture("");
 }
 
 void Renderer::SetPictures(GLuint* IDs, int count)
@@ -126,21 +138,13 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 		return -1;
 	}
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
-		
-}
 
-void Renderer::Run()
-{
+
 	//glEnable(GL_DEPTH_TEST);
 	//ShaderProgram* sp = new ShaderProgram("C:/Test/glVert.txt", "c:/Test/glFrag.txt",ShaderStringType::Path);
-	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
+	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
-		//Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
-		//Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
-		//Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,1)),
-		//Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 0))
-
 		//GL UVs ORDERING
 		Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
 		Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
@@ -148,24 +152,27 @@ void Renderer::Run()
 		Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 1))
 	};
 
-	Mesh* mesh = new Mesh();
-	mesh->Create(vertices, 4);
+	s_QuadMesh = new Mesh();
+	s_QuadMesh->Create(vertices, 4);
 
 	int indices[] = { 0,1,2,0,2,3 };
-	mesh->CreateIndexBuffer(indices, 6);
+	s_QuadMesh->CreateIndexBuffer(indices, 6);
 
 	//Model* model = new Model(sp, mesh);
-	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
+	GLuint samplerID = glGetUniformLocation(s_PicturesShader->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
-	//glBindTexture(GL_TEXTURE_2D, texID2);
+	//glBindTexture(GL_TEXTURE_2D, samplerID);
+	s_PicturesShader->SetAsCurrent();//Shader
+	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+	s_QuadMesh->Draw();
+}
 
+void Renderer::Run()
+{
 	unsigned sizeCached = s_Pictures.size();
-
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
-
-	sp->SetAsCurrent();//Shader
 
 	//render loop
 	do
@@ -182,12 +189,17 @@ void Renderer::Run()
 		}
 		
 		// draw
-		glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
-		mesh->Draw();
-
-		while (s_FpsLimiter.ElapsedTime() < s_TargetFrameTime)
+		if (s_RendererState == RendererState::Playing)
 		{
+			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
 		}
+		else if(s_RendererState == RendererState::Loading)
+		{
+			//glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+		}
+		s_QuadMesh->Draw();
+
+		while (s_FpsLimiter.ElapsedTime() < s_TargetFrameTime){}
 
 		glfwSwapBuffers(s_GLWindow);
 		s_FpsLimiter.Stop();
@@ -204,24 +216,25 @@ void Renderer::Run()
 		}
 		glfwPollEvents();
 
-	} while (!glfwWindowShouldClose(s_GLWindow) && s_Running);
+	} while (!glfwWindowShouldClose(s_GLWindow));
 
 
 	glfwDestroyWindow(s_GLWindow);
 	glfwTerminate();
 
-	//clean up
-	delete (sp);
-	delete(mesh);
-}
 
-void Renderer::Cleanup()
-{
-	glfwDestroyWindow(s_GLWindow);
-	glfwTerminate();
+	
 }
 
 
 Renderer::~Renderer()
 {
+	glfwDestroyWindow(s_GLWindow);
+	glfwTerminate();
+
+	//clean up
+	glDeleteTextures(1, &s_LoadingScrTexID);
+	glDeleteTextures(1, &s_ReadyScrTexID);
+	delete (s_PicturesShader);
+	delete(s_QuadMesh);
 }
