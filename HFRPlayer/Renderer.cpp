@@ -22,6 +22,8 @@ ShaderProgram* Renderer::s_PicturesShader;
 GLuint Renderer::s_LoadingScrTexID{ 0 };
 GLuint Renderer::s_ReadyScrTexID{ 0 };
 
+std::string Renderer::s_Name{ "" };
+
 void Renderer::Error_callback(int error, const char * description)
 {
 	fputs(description, stderr);
@@ -32,8 +34,8 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 {
 	if (action ==  GLFW_PRESS)
 	{
-		if (key == GLFW_KEY_ESCAPE)
-			glfwSetWindowShouldClose(window, GL_TRUE);
+		if (key == GLFW_KEY_ESCAPE) LoadTextures(s_Name);
+			//glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
 
@@ -75,9 +77,21 @@ void Renderer::LoadInterfaceTextures()
 	s_ReadyScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/player_ready.png");
 }
 
+void Renderer::DisplayLoadingScreen()
+{
+	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+	s_QuadMesh->Draw();
+	glfwSwapBuffers(s_GLWindow);
+}
+
 bool Renderer::LoadNewSet(const std::string & name)
 {
-	
+	DisplayLoadingScreen();
+	std::cout << "Deleting textures..." << std::endl;
+	// free all textures first
+	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
+	FastImgLoader::LoadImages(name, s_Pictures);
+	return 0;
 }
 
 void Renderer::SetPictures(GLuint* IDs, int count)
@@ -88,6 +102,13 @@ void Renderer::SetPictures(GLuint* IDs, int count)
 void Renderer::SetPictures(std::vector<GLuint>& IDs)
 {
 	s_Pictures = IDs;
+}
+
+void Renderer::LoadTextures(const std::string & name)
+{
+	s_Name = name;
+	s_RendererState = RendererState::Loading;
+
 }
 
 void Renderer::SetFPS(float fps)
@@ -159,21 +180,14 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 
 
 	LoadInterfaceTextures();
-	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
-	
-	
-	//
-	
-		/*glClearColor(1, 0, 1, 1);
-
-		glClear(GL_COLOR_BUFFER_BIT);*/
-	s_QuadMesh->Draw();
-    glfwSwapBuffers(s_GLWindow);
+	//DisplayLoadingScreen();
 	
 }
 
 void Renderer::Run()
 {
+
+	//LoadNewSet(s_Name);
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
@@ -185,8 +199,7 @@ void Renderer::Run()
 	//render loop
 	do
 	{
-		
-		
+			
 		// draw
 		if (s_RendererState == RendererState::Playing)
 		{
@@ -201,31 +214,43 @@ void Renderer::Run()
 				s_framePhase++;
 			}
 			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
+			s_QuadMesh->Draw();
+
+			while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
+			{
+			}
+
+			glfwSwapBuffers(s_GLWindow);
+			s_FpsLimiter.Stop();
+			s_FpsLimiter.Start();
+
+
+			s_FrameCounter++;
+			if (s_FpsCountTimer.ElapsedTime() >= 1)
+			{
+				std::cout << "FPS: " << s_FrameCounter << std::endl;
+				s_FpsCountTimer.Stop();
+				s_FrameCounter = 0;
+				s_FpsCountTimer.Start();
+			}
+			glfwPollEvents();
+
 		}
 
 		else if(s_RendererState == RendererState::Loading)
 		{
-			glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
-		}
-		s_QuadMesh->Draw();
-
-		while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
-		{}
-
-		glfwSwapBuffers(s_GLWindow);
-		s_FpsLimiter.Stop();
-		s_FpsLimiter.Start();
-		
-
-		s_FrameCounter++;
-		if (s_FpsCountTimer.ElapsedTime() >= 1)
-		{
-			std::cout << "FPS: " << s_FrameCounter << std::endl;
-			s_FpsCountTimer.Stop();
-			s_FrameCounter = 0;
+			LoadNewSet(s_Name);	
+			sizeCached = s_Pictures.size();
+			s_CurrentIndex = 0;
+			s_RendererState = RendererState::Playing;
 			s_FpsCountTimer.Start();
+			s_FpsLimiter.Start();
+			previousDispTime = std::chrono::high_resolution_clock::now();
+			currTime = std::chrono::high_resolution_clock::time_point();
+			
+
 		}
-		glfwPollEvents();
+		
 
 	} while (!glfwWindowShouldClose(s_GLWindow));
 
@@ -243,6 +268,7 @@ Renderer::~Renderer()
 	//clean up
 	glDeleteTextures(1, &s_LoadingScrTexID);
 	glDeleteTextures(1, &s_ReadyScrTexID);
+	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
 	delete (s_PicturesShader);
 	delete(s_QuadMesh);
 }

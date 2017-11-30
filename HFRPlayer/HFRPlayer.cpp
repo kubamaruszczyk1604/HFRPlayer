@@ -1,7 +1,6 @@
 // MAIN ENTRY HERE 
 #include "ExperimentSocketManager.h"
 #include "Renderer.h"
-#include "FastImgLoader.h"
 #include "ConfigReader.h"
 #include <exception>
 
@@ -61,25 +60,27 @@ int main(int argc, char** args)
 	//Read in images
 	std::vector<GLuint> imagesIDs;
 	_BenchmarkTimer.Start();
-	if (!FastImgLoader::LoadImages(conf->NameBase,imagesIDs)) // if there is not a single image file - quit.
-	{
-		std::cout << "No file(s) found!" << std::endl;
-		return 0;
-	}
+	//if (!FastImgLoader::LoadImages(conf->NameBase,imagesIDs)) // if there is not a single image file - quit.
+	//{
+	//	std::cout << "No file(s) found!" << std::endl;
+	//	return 0;
+	//}
+	Renderer::LoadTextures(conf->NameBase);
 	std::cout << "Images Loading took: " << _BenchmarkTimer.ElapsedTime() << " seconds." << std::endl;
 	_BenchmarkTimer.Stop();
 
-	delete conf;
-	conf = nullptr;
+	
 
 	// Pass images to the renderer
-	Renderer::SetPictures(imagesIDs);
+	//Renderer::SetPictures(imagesIDs);
 
 	// Renderer loop(blocking)
 	Renderer::Run();
 
 	Networking::ExperimentSocketManager::cleanup();
 
+	delete conf;
+	conf = nullptr;
 	std::cout << "Deleting textures..." << std::endl;
 	// free all textures
 	glDeleteTextures(imagesIDs.size(), &imagesIDs[0]);
