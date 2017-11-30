@@ -1,12 +1,15 @@
 #include "Renderer.h"
-#include "Model.h"
 #include "FastImgLoader.h"
+
+#include "ShaderProgram.h"
+#include <iostream>
+
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 
 Stopwatch Renderer::s_FpsCountTimer;
 Stopwatch Renderer::s_FpsLimiter;
-float Renderer::s_TargetFrameTime {1.0f/120.0f};
+uint64_t Renderer::s_TargetFrameTime { 1000000000L /120};
 uint32_t Renderer::s_frameRepeatCount{ 1 };
 uint32_t Renderer::s_framePhase{ 1 };
 RendererState Renderer::s_RendererState{ RendererState::Playing };
@@ -49,13 +52,9 @@ std::string Renderer::GenVertexShader()
 {
 	std::string vertexShader = "#version 330\n\n";
 	vertexShader += "layout(location = 0) in vec3 vertex_position;\n";
-	vertexShader += "layout(location = 1) in vec3 vertex_normal;\n";
 	vertexShader += "layout(location = 2) in vec2 uvs;\n\n";
-	vertexShader += "uniform mat4 uWORLD;\n";
-	vertexShader += "out vec3 oPosition_WorldSpace;\n";
 	vertexShader += "out vec2 oUVs;\n\n";
 	vertexShader += "void main()\n{\n";
-	vertexShader += " oPosition_WorldSpace = (vec4(vertex_position,1)).xyz;\n";
 	vertexShader += "  oUVs = uvs;\n";
 	vertexShader += "   gl_Position =  vec4(vertex_position,1.0);\n}";
 	return vertexShader;
@@ -64,7 +63,6 @@ std::string Renderer::GenVertexShader()
 std::string Renderer::GenFragmentShader()
 {
 	std::string fragmentShader = "#version 330\n\n";
-	fragmentShader += "in vec3 oPosition_WorldSpace;\n";
 	fragmentShader += "in vec2 oUVs;\n\n";
 	fragmentShader += "out vec4 FragColour;\n\n";
 	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
@@ -97,7 +95,7 @@ void Renderer::SetFPS(float fps)
 	// assume max refresh rate of 165. TODO: should this come from a config as well?
 	s_frameRepeatCount = 165 / aFps;
 	aFps = aFps * s_frameRepeatCount;
-	s_TargetFrameTime = 1.0f / aFps;
+	s_TargetFrameTime = 1000000000L / aFps;
 }
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
@@ -113,7 +111,6 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
-	//glfwWindowHint(GLFW_SAMPLES, 4); 
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	if(fullScreen)
@@ -129,6 +126,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	}
    
 	glfwMakeContextCurrent(s_GLWindow);
+	glfwSwapInterval(1);
 
 	//GLEW  stuff init
 	GLenum err = glewInit();
@@ -140,9 +138,9 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
 
-	//glEnable(GL_DEPTH_TEST);
-	//ShaderProgram* sp = new ShaderProgram("C:/Test/glVert.txt", "c:/Test/glFrag.txt",ShaderStringType::Path);
-	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
+void Renderer::Run()
+{
+	ShaderProgram* sp = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
 		//GL UVs ORDERING
@@ -158,8 +156,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	int indices[] = { 0,1,2,0,2,3 };
 	s_QuadMesh->CreateIndexBuffer(indices, 6);
 
-	//Model* model = new Model(sp, mesh);
-	GLuint samplerID = glGetUniformLocation(s_PicturesShader->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
+	GLuint samplerID = glGetUniformLocation(sp->GetID(), "SCT_TEXTURE2D_0"); // can be done only onse in this case
 	glUniform1i(samplerID, 0);//loc, value
 	glActiveTexture(GL_TEXTURE0);
 	//glBindTexture(GL_TEXTURE_2D, samplerID);
@@ -173,6 +170,10 @@ void Renderer::Run()
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	s_FpsLimiter.Start();
+
+
+	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
+	std::chrono::high_resolution_clock::time_point currTime;
 
 	//render loop
 	do
@@ -199,7 +200,9 @@ void Renderer::Run()
 		}
 		s_QuadMesh->Draw();
 
-		while (s_FpsLimiter.ElapsedTime() < s_TargetFrameTime){}
+		while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
+		{
+		}
 
 		glfwSwapBuffers(s_GLWindow);
 		s_FpsLimiter.Stop();

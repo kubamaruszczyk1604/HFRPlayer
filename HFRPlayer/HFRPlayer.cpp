@@ -1,9 +1,11 @@
 // MAIN ENTRY HERE 
-
+#include "ExperimentSocketManager.h"
 #include "Renderer.h"
 #include "FastImgLoader.h"
 #include "ConfigReader.h"
 #include <exception>
+
+
 
 Stopwatch _BenchmarkTimer;
 
@@ -47,10 +49,13 @@ int main(int argc, char** args)
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
 
+	// TODO: consider loading port from config file. For now, fixing it to 30000
+	Networking::ExperimentSocketManager::initialise(30000);
+
 	///////////////  IMAGE LOADING AND RENDERING ////////////////
 
 	// Init OpenGL
-	Renderer::Init(800, 600, "FPS", false); 
+	Renderer::Init(256, 144, "FPS", false); 
 	Renderer::SetFPS(conf->FPS);
 
 	//Read in images
@@ -72,6 +77,8 @@ int main(int argc, char** args)
 
 	// Renderer loop(blocking)
 	Renderer::Run();
+
+	Networking::ExperimentSocketManager::cleanup();
 
 	std::cout << "Deleting textures..." << std::endl;
 	// free all textures

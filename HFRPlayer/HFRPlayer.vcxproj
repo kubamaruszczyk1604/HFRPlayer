@@ -162,14 +162,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ExperimentSocketManager.h" />
     <ClInclude Include="FastImgLoader.h" />
     <ClInclude Include="GLTextureLoader.h" />
+    <ClInclude Include="ExperimentSocketStream.h" />
     <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Model.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="SocketConnection.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Stopwatch.h" />
     <ClInclude Include="targetver.h" />
@@ -177,14 +179,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConfigReader.cpp" />
+    <ClCompile Include="ExperimentSocketManager.cpp" />
+    <ClCompile Include="ExperimentSocketStream.cpp" />
     <ClCompile Include="FastImgLoader.cpp" />
     <ClCompile Include="GLTextureLoader.cpp" />
     <ClCompile Include="HFRPlayer.cpp" />
     <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="SocketConnection.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Stopwatch.cpp" />
   </ItemGroup>

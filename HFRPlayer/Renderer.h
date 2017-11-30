@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "Model.h"
-//#include "GLTextureLoader.h"
+#include "Mesh.h"
+
+
 #include "Stopwatch.h"
 enum class RendererState {Playing = 0, Loading = 1, WaitingForUser = 2 };
 class Renderer
@@ -24,7 +25,7 @@ private:
 
 	static Stopwatch s_FpsLimiter;
 	static uint32_t s_framePhase;
-	static float s_TargetFrameTime;
+	static uint64_t s_TargetFrameTime;
 	static uint32_t s_frameRepeatCount;
 
 	static RendererState s_RendererState;
