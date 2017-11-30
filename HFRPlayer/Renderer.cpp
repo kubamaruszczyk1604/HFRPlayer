@@ -71,8 +71,8 @@ std::string Renderer::GenFragmentShader()
 
 void Renderer::LoadInterfaceTextures()
 {
-	//s_LoadingScrTexID = GLTextureLoader::LoadTexture("");
-	//s_ReadyScrTexID = GLTextureLoader::LoadTexture("");
+	s_LoadingScrTexID = GLTextureLoader::LoadTexture("c:/test/loading_screen.png");
+	s_ReadyScrTexID = GLTextureLoader::LoadTexture("");
 }
 
 void Renderer::SetPictures(GLuint* IDs, int count)
@@ -102,10 +102,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwSetErrorCallback(Error_callback);
     glewExperimental = GL_TRUE;
 
-	if (!glfwInit())
-	{
-		return false;
-	}
+	if (!glfwInit()){ return false;}
 	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
@@ -134,8 +131,6 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	}
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
-
-
 	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
 	Vertex vertices[] =
 	{
@@ -156,8 +151,20 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glUniform1i(samplerID, 0);
 	glActiveTexture(GL_TEXTURE0);
 	s_PicturesShader->SetAsCurrent();
+
+
+	LoadInterfaceTextures();
 	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+	
+	
+	//
+	
+		/*glClearColor(1, 0, 1, 1);
+
+		glClear(GL_COLOR_BUFFER_BIT);*/
 	s_QuadMesh->Draw();
+    glfwSwapBuffers(s_GLWindow);
+	
 }
 
 void Renderer::Run()
@@ -196,8 +203,7 @@ void Renderer::Run()
 		s_QuadMesh->Draw();
 
 		while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
-		{
-		}
+		{}
 
 		glfwSwapBuffers(s_GLWindow);
 		s_FpsLimiter.Stop();
@@ -219,9 +225,6 @@ void Renderer::Run()
 
 	glfwDestroyWindow(s_GLWindow);
 	glfwTerminate();
-
-
-	
 }
 
 
