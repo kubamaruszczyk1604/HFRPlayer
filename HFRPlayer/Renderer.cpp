@@ -8,7 +8,6 @@ float Renderer::s_GlobalTime{ 0 };
 bool Renderer::s_GlobalTimeThreadRunningFlag{ true };
 
 Stopwatch Renderer::s_FpsCountTimer;
-Stopwatch Renderer::s_FpsLimiter;
 uint64_t Renderer::s_TargetFrameTime { 1000000000L /120};
 uint32_t Renderer::s_frameRepeatCount{ 1 };
 uint32_t Renderer::s_framePhase{ 1 };
@@ -38,7 +37,10 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 {
 	if (action ==  GLFW_PRESS)
 	{
-		if (key == GLFW_KEY_ESCAPE) { LoadTextures(s_Name); }// test reload
+		if (key == GLFW_KEY_ESCAPE) 
+		{ 
+			glfwSetWindowShouldClose(window, GL_TRUE);
+		}
 		else if (key == GLFW_KEY_ENTER)
 		{
 			if (s_RendererState == RendererState::WaitingForUser) s_RendererState = RendererState::Playing;
@@ -229,7 +231,6 @@ void Renderer::Run()
 
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
-	s_FpsLimiter.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
 	// main loop
@@ -254,11 +255,8 @@ void Renderer::Run()
 			while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
 			{
 			}
-
+			previousDispTime = currTime;
 			glfwSwapBuffers(s_GLWindow);
-			s_FpsLimiter.Stop();
-			s_FpsLimiter.Start();
-
 
 			s_FrameCounter++;
 			if (s_FpsCountTimer.ElapsedTime() >= 1)
@@ -294,8 +292,6 @@ void Renderer::Run()
 			sizeCached = s_Pictures.size();
 			s_CurrentIndex = 0;
 			s_FpsCountTimer.Start();
-			s_FpsLimiter.Start();
-			previousDispTime = std::chrono::high_resolution_clock::now();
 			currTime = std::chrono::high_resolution_clock::time_point();
 			glfwPollEvents();
 			

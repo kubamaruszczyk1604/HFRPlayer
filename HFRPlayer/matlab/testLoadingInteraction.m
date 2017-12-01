@@ -1,7 +1,8 @@
 paths = {...
-    'C:\Users\gd355\Documents\temporal_eyecoding\core\temp\test\test', ...
-    'C:\Users\gd355\Documents\temporal_eyecoding\core\temp\test2\test'};
-activePath = 1;
+    'C:\Users\gd355\Source\temporal_eyecoding\core\temp\circ20\full_half\test', ...
+    'C:\Users\gd355\Source\temporal_eyecoding\core\temp\circ20\CLF.RT_half\test', ...
+    'C:\Users\gd355\Source\temporal_eyecoding\core\temp\text\full_half_text165\test', ...
+    'C:\Users\gd355\Source\temporal_eyecoding\core\temp\text\CLF.RT_half_text165\test'};
 
 disp('attempting to open network port');
 networkSocket = tcpip('localhost',30000);
@@ -19,12 +20,21 @@ while( c ~= 'W')
 end
 disp('received welcome character');
 
-disp('requesting a video"');
 
-c = 0;
+c = 49;
 while 1
-    fwrite(networkSocket, [paths{activePath + 1} '#'],'uint8');
-    activePath = 1 - activePath;
+    
+disp('requesting a video');
+    if c == 49
+        fwrite(networkSocket, [paths{1} '#'],'uint8');
+    elseif c == 50
+        fwrite(networkSocket, [paths{2} '#'],'uint8');
+    elseif c == 51
+        fwrite(networkSocket, [paths{3} '#'],'uint8');
+    elseif c == 52
+        fwrite(networkSocket, [paths{4} '#'],'uint8');
+    end
+    
     while (networkSocket.BytesAvailable == 0)
         pause( 0.5 );
     end

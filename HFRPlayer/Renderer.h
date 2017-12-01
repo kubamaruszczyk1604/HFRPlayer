@@ -27,7 +27,6 @@ private:
 	static ShaderProgram* s_PicturesShader;
 	static ShaderProgram* s_LoadingShader;
 
-	static Stopwatch s_FpsLimiter;
 	static uint32_t s_framePhase;
 	static uint64_t s_TargetFrameTime;
 	static uint32_t s_frameRepeatCount;
