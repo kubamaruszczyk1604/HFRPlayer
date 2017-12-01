@@ -22,11 +22,11 @@ using namespace std;
 FastImgLoader::~FastImgLoader()
 {
 }
-int tot = 0;
 void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 {
 	int counter = startAtIndex;
 	string fileName = formant + std::to_string(counter) + ".png";
+
 	while (FileExists(fileName))
 	{	
 		while (s_BufferItemCount > BUFFER_SIZE) // this is to prevent buffer overflow. Gives consumer time to process items in the queues
@@ -55,6 +55,7 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 	s_ThreadCountMutex.lock();
 	s_RunningThreads--;
 	s_ThreadCountMutex.unlock();
+
 }
 
 bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)

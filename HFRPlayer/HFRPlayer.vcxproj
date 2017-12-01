@@ -158,7 +158,8 @@
 copy "$(SolutionDir)HFRPlayer\config.txt" "$(TargetDir)"
 md  "$(TargetDir)InterfaceImages"
 copy "$(SolutionDir)HFRPlayer\InterfaceImages\loading_screen.png" "$(TargetDir)InterfaceImages"
-copy "$(SolutionDir)HFRPlayer\InterfaceImages\player_ready.png" "$(TargetDir)InterfaceImages"</Command>
+copy "$(SolutionDir)HFRPlayer\InterfaceImages\player_ready.png" "$(TargetDir)InterfaceImages"
+copy "$(SolutionDir)HFRPlayer\InterfaceImages\no_img_found.png" "$(TargetDir)InterfaceImages"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

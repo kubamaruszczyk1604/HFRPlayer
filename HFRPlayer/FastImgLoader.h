@@ -6,6 +6,7 @@
 
 #include "GLTextureLoader.h"
 #include "SafeQueue.h"
+
 #define HFR_ORDERING_TEST
 class FastImgLoader
 {
@@ -40,12 +41,9 @@ public:
 	static bool LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures);
 
 	inline static bool FileExists(const std::string& name)
-	{
-		
+	{	
 		struct stat buffer;
 		return (stat(name.c_str(), &buffer) == 0);
-		
-
 	}
 
 };

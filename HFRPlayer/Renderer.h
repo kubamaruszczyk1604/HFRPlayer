@@ -11,7 +11,7 @@
 #include "Stopwatch.h"
 #include "FastImgLoader.h"
 
-enum class RendererState {Playing = 0, Loading = 1, WaitingForUser = 2 };
+enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer
 {
 private:
@@ -38,6 +38,7 @@ private:
 
 	static GLuint s_LoadingScrTexID;
 	static GLuint s_ReadyScrTexID;
+	static GLuint s_NoFilesScrTexID;
 
 	static std::string s_Name;
 
@@ -52,6 +53,7 @@ private:
 	static void LoadInterfaceTextures();
 	static void DisplayLoadingScreen();
 	static void DisplayWaitForUserScreen();
+	static void DisplayNoFilesFoundScreen();
 	static bool LoadSet(const std::string& name); //Internal, non thread-safe
 
 	static Networking::ExperimentSocketStream* s_activeConnection;

@@ -24,6 +24,7 @@ ShaderProgram* Renderer::s_LoadingShader;
 
 GLuint Renderer::s_LoadingScrTexID{ 0 };
 GLuint Renderer::s_ReadyScrTexID{ 0 };
+GLuint Renderer::s_NoFilesScrTexID{ 0 };
 
 std::string Renderer::s_Name{ "" };
 
@@ -104,9 +105,13 @@ std::string Renderer::GenLoadingFragShader()
 	fragmentShader += "in vec2 oUVs;\n\n";
 	fragmentShader += "out vec4 FragColour;\n\n";
 	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
+	fragmentShader += "uniform vec3 col;\n\n";
 	fragmentShader += "uniform float time;\n\n";
 	fragmentShader += "void main()\n{\n";
-	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs)*(0.5+abs(sin(time)));\n}\n";
+	fragmentShader += "vec4 sampled = texture2D(SCT_TEXTURE2D_0,oUVs); \n";
+	fragmentShader += "if((sampled.x + sampled.y + sampled.z) < 2.6) \n";
+	fragmentShader += "FragColour =  sampled - (0.5*abs(sin(time))*vec4(col,1)); \n";
+	fragmentShader += "else FragColour =  sampled; \n}\n";
 	return fragmentShader;
 }
 
@@ -114,6 +119,7 @@ void Renderer::LoadInterfaceTextures()
 {
 	s_LoadingScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/loading_screen.png");
 	s_ReadyScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/player_ready.png");
+	s_NoFilesScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/no_img_found.png");
 }
 
 void Renderer::DisplayLoadingScreen()
@@ -125,7 +131,28 @@ void Renderer::DisplayLoadingScreen()
 
 void Renderer::DisplayWaitForUserScreen()
 {
+	s_LoadingShader->SetAsCurrent();
+
+	GLuint loct = glGetUniformLocation(s_LoadingShader->GetID(), "time");
+	glUniform1f(loct, s_GlobalTime*1.5);
+	GLuint locc = glGetUniformLocation(s_LoadingShader->GetID(), "col");
+	const float col[] = { 1.0,1.0,1.0 };
+	glUniform3f(locc, 0.41, 0.41, 0);
 	glBindTexture(GL_TEXTURE_2D, s_ReadyScrTexID);
+	s_QuadMesh->Draw();
+	glfwSwapBuffers(s_GLWindow);
+}
+
+void Renderer::DisplayNoFilesFoundScreen()
+{
+	s_LoadingShader->SetAsCurrent();
+
+	GLuint loct = glGetUniformLocation(s_LoadingShader->GetID(), "time");
+	glUniform1f(loct, s_GlobalTime*1);
+	GLuint locc = glGetUniformLocation(s_LoadingShader->GetID(), "col");
+	const float col[] = { 1.0,1.0,1.0 };
+	glUniform3f(locc, 0.3, 0.3, 0);
+	glBindTexture(GL_TEXTURE_2D, s_NoFilesScrTexID);
 	s_QuadMesh->Draw();
 	glfwSwapBuffers(s_GLWindow);
 }
@@ -136,8 +163,8 @@ bool Renderer::LoadSet(const std::string & name)
 	std::cout << "Deleting textures..." << std::endl;
 	// free all textures first
 	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
-	FastImgLoader::LoadImages(name, s_Pictures);
-	return 0;
+	return FastImgLoader::LoadImages(name, s_Pictures);
+	
 }
 
 
@@ -239,6 +266,7 @@ void Renderer::Run()
 		//render loop
 		if (s_RendererState == RendererState::Playing)
 		{
+			s_PicturesShader->SetAsCurrent();
 			if (s_framePhase >= s_frameRepeatCount)
 			{
 				s_CurrentIndex++;
@@ -272,21 +300,17 @@ void Renderer::Run()
 
 		else if(s_RendererState == RendererState::Loading)
 		{
-			
-			s_LoadingShader->SetAsCurrent();
-			GLuint loc = glGetUniformLocation(s_LoadingShader->GetID(), "time");
-			glUniform1f(loc, 1.0);
-			LoadSet(s_Name);	
+			s_PicturesShader->SetAsCurrent();
+			if(LoadSet(s_Name)) s_RendererState = RendererState::WaitingForUser;
+			else s_RendererState = RendererState::FailedToLoad;
 
 			// flush events that happened while loading
 			glfwPollEvents();
-
-			s_RendererState = RendererState::WaitingForUser;
 			
 		}
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
-			s_PicturesShader->SetAsCurrent();
+			
 			
 			DisplayWaitForUserScreen();
 			sizeCached = s_Pictures.size();
@@ -295,6 +319,16 @@ void Renderer::Run()
 			currTime = std::chrono::high_resolution_clock::time_point();
 			glfwPollEvents();
 			
+		}
+		else if (s_RendererState == RendererState::FailedToLoad)
+		{
+			DisplayNoFilesFoundScreen();
+			sizeCached = s_Pictures.size();
+			s_CurrentIndex = 0;
+			s_FpsCountTimer.Start();
+			currTime = std::chrono::high_resolution_clock::time_point();
+			glfwPollEvents();
+
 		}
 
 
