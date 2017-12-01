@@ -6,7 +6,7 @@
 
 #include "GLTextureLoader.h"
 #include "SafeQueue.h"
-
+#define HFR_ORDERING_TEST
 class FastImgLoader
 {
 private:
@@ -17,6 +17,12 @@ private:
 
 	static int s_RunningThreads;
 	static SafeQueue<FIBITMAP*> s_Queues[];
+#ifdef HFR_ORDERING_TEST
+	static SafeQueue<int> s_FileNumbersReadTestQueue[];
+	static std::vector<int> s_IndexTestResults;
+#endif // HFR_ORDERING_TEST
+
+	
 	static std::mutex s_CounterMutex;
 	static std::mutex s_ConsoleMutex;
 	static std::mutex s_ThreadCountMutex;

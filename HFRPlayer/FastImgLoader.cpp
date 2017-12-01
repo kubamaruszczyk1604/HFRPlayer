@@ -11,6 +11,12 @@ std::mutex FastImgLoader::s_CounterMutex;
 std::mutex FastImgLoader::s_ConsoleMutex;
 std::mutex FastImgLoader::s_ThreadCountMutex;
 int FastImgLoader::s_BufferItemCount{ 0 };
+
+#ifdef HFR_ORDERING_TEST
+SafeQueue<int> FastImgLoader::s_FileNumbersReadTestQueue[MAX_THREAD_COUNT];
+std::vector<int> FastImgLoader::s_IndexTestResults;
+#endif // HFR_ORDERING_TEST
+
 using namespace std;
 
 FastImgLoader::~FastImgLoader()
@@ -37,6 +43,9 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 		}
 
 		s_Queues[startAtIndex].enqueue(bitmap);
+#ifdef HFR_ORDERING_TEST
+		s_FileNumbersReadTestQueue[startAtIndex].enqueue(counter);
+#endif // HFR_ORDERING_TEST
 		counter+=MAX_THREAD_COUNT;
 		s_CounterMutex.lock();
 		s_BufferItemCount++;
@@ -83,6 +92,14 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 			_sleep(0);
 		}
 		output.push_back(GLTextureLoader::PushToGPU(bitmap));
+#ifdef HFR_ORDERING_TEST
+		int index;
+		while (!s_FileNumbersReadTestQueue[queueIndex].dequeue(index))
+		{
+			_sleep(0);
+		}
+		s_IndexTestResults.push_back(index);
+#endif // HFR_ORDERING_TEST
 		GLTextureLoader::FreeImageMemory(bitmap);
 		s_CounterMutex.lock();
 		s_BufferItemCount--; 
@@ -95,6 +112,14 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 	//while (s_RunningThreads) { _sleep(0); } // block until threads are working 
 	for (int i = 0; i < threads.size(); ++i) { threads[i].join(); } // All done. Join.
 	cout << "Reading finished. Total loaded: " << to_string(totalConsumed) << endl;
+#ifdef HFR_ORDERING_TEST
+	std::cout << "FILES WERE PUSHED TO GPU IN FOLLOWING ORDER: " << std::endl;
+	for (int i = 0; i < s_IndexTestResults.size(); ++i)
+	{
+		std::cout << std::to_string(s_IndexTestResults[i]) << ", ";
+	}
+	cout << endl;
+#endif // HFR_ORDERING_TEST
 	return true;
 }
 
