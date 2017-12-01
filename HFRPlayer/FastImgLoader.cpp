@@ -59,7 +59,7 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 
 bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 {
-
+	output.clear();
 	string fileName = formant + std::to_string(0) + ".png";
 	cout << "Starting from file: " << fileName << endl;
 
@@ -119,6 +119,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 		std::cout << std::to_string(s_IndexTestResults[i]) << ", ";
 	}
 	cout << endl;
+	s_IndexTestResults.clear();
 #endif // HFR_ORDERING_TEST
 	return true;
 }
