@@ -58,7 +58,7 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 
 }
 
-bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
+bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, LOADING_PROGRESS_CALLBACK progressCallbackFunction)
 {
 	output.clear();
 	string fileName = formant + std::to_string(0) + ".png";
@@ -107,6 +107,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output)
 		s_CounterMutex.unlock();
 		queueIndex++;
 		totalConsumed++;
+		if (progressCallbackFunction) progressCallbackFunction(totalConsumed);
 		glfwPollEvents();
 	}
 	

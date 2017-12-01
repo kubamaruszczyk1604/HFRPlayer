@@ -8,6 +8,9 @@
 #include "SafeQueue.h"
 
 #define HFR_ORDERING_TEST
+
+typedef void(*LOADING_PROGRESS_CALLBACK)(int progress);
+
 class FastImgLoader
 {
 private:
@@ -37,7 +40,7 @@ public:
 	FastImgLoader& operator=(const FastImgLoader&) = delete;
 	~FastImgLoader();
 
-	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output);
+	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output, LOADING_PROGRESS_CALLBACK progressCallbackFunction = nullptr);
 	static bool LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures);
 
 	inline static bool FileExists(const std::string& name)

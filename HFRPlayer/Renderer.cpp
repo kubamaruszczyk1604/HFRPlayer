@@ -1,7 +1,7 @@
 #include "Renderer.h"
 #include "FastImgLoader.h"
 #include <iostream>
-
+#include <cstdlib>
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 float Renderer::s_GlobalTime{ 0 };
@@ -20,7 +20,8 @@ Networking::ExperimentSocketStream* Renderer::s_activeConnection = nullptr;
 
 Mesh*  Renderer::s_QuadMesh;
 ShaderProgram* Renderer::s_PicturesShader;
-ShaderProgram* Renderer::s_LoadingShader;
+ShaderProgram* Renderer::s_FadeShader;
+ShaderProgram* Renderer::s_LoadBarShader;
 
 GLuint Renderer::s_LoadingScrTexID{ 0 };
 GLuint Renderer::s_ReadyScrTexID{ 0 };
@@ -99,7 +100,7 @@ std::string Renderer::GenFragmentShader()
 	return fragmentShader;
 }
 
-std::string Renderer::GenLoadingFragShader()
+std::string Renderer::GenFadeFragShader()
 {
 	std::string fragmentShader = "#version 330\n\n";
 	fragmentShader += "in vec2 oUVs;\n\n";
@@ -115,27 +116,48 @@ std::string Renderer::GenLoadingFragShader()
 	return fragmentShader;
 }
 
+std::string Renderer::GenLoadBarFragShader()
+{
+	std::string fragmentShader = "#version 330\n\n";
+	fragmentShader += "in vec2 oUVs;\n\n";
+	fragmentShader += "out vec4 FragColour;\n\n";
+	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
+	fragmentShader += "uniform float progress;\n\n";
+	fragmentShader += "void main()\n{\n";
+	fragmentShader += "if((oUVs.y > 0.7)&&(oUVs.y < 0.8)&&(oUVs.x < progress)) FragColour = texture2D(SCT_TEXTURE2D_0,oUVs)*0.5 + vec4(0.5-0.5*oUVs.x,0,oUVs.x,0.5); else \n";
+	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
+	return fragmentShader;
+}
+
 void Renderer::LoadInterfaceTextures()
 {
 	s_LoadingScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/loading_screen.png");
 	s_ReadyScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/player_ready.png");
 	s_NoFilesScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/no_img_found.png");
 }
-
-void Renderer::DisplayLoadingScreen()
+int lp = 0;
+void Renderer::DisplayLoadingScreen(int progress)
 {
-	glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
-	s_QuadMesh->Draw();
-	glfwSwapBuffers(s_GLWindow);
+	if (lp  < progress)
+	{
+		s_LoadBarShader->SetAsCurrent();
+		GLuint loc = glGetUniformLocation(s_LoadBarShader->GetID(), "progress");
+		glUniform1f(loc, (float)lp/500.0f);
+		glBindTexture(GL_TEXTURE_2D, s_LoadingScrTexID);
+		s_QuadMesh->Draw();
+		glfwSwapBuffers(s_GLWindow);
+		lp = progress + (rand() % 30 + 60);
+	}
 }
 
 void Renderer::DisplayWaitForUserScreen()
 {
-	s_LoadingShader->SetAsCurrent();
 
-	GLuint loct = glGetUniformLocation(s_LoadingShader->GetID(), "time");
+	s_FadeShader->SetAsCurrent();
+
+	GLuint loct = glGetUniformLocation(s_FadeShader->GetID(), "time");
 	glUniform1f(loct, s_GlobalTime*1.5);
-	GLuint locc = glGetUniformLocation(s_LoadingShader->GetID(), "col");
+	GLuint locc = glGetUniformLocation(s_FadeShader->GetID(), "col");
 	const float col[] = { 1.0,1.0,1.0 };
 	glUniform3f(locc, 0.41, 0.41, 0);
 	glBindTexture(GL_TEXTURE_2D, s_ReadyScrTexID);
@@ -145,11 +167,11 @@ void Renderer::DisplayWaitForUserScreen()
 
 void Renderer::DisplayNoFilesFoundScreen()
 {
-	s_LoadingShader->SetAsCurrent();
+	s_FadeShader->SetAsCurrent();
 
-	GLuint loct = glGetUniformLocation(s_LoadingShader->GetID(), "time");
+	GLuint loct = glGetUniformLocation(s_FadeShader->GetID(), "time");
 	glUniform1f(loct, s_GlobalTime*1);
-	GLuint locc = glGetUniformLocation(s_LoadingShader->GetID(), "col");
+	GLuint locc = glGetUniformLocation(s_FadeShader->GetID(), "col");
 	const float col[] = { 1.0,1.0,1.0 };
 	glUniform3f(locc, 0.3, 0.3, 0);
 	glBindTexture(GL_TEXTURE_2D, s_NoFilesScrTexID);
@@ -158,12 +180,12 @@ void Renderer::DisplayNoFilesFoundScreen()
 }
 
 bool Renderer::LoadSet(const std::string & name)
-{
-	DisplayLoadingScreen();
+{	
 	std::cout << "Deleting textures..." << std::endl;
 	// free all textures first
 	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
-	return FastImgLoader::LoadImages(name, s_Pictures);
+	s_Pictures.clear();
+	return FastImgLoader::LoadImages(name, s_Pictures, DisplayLoadingScreen);
 	
 }
 
@@ -193,6 +215,7 @@ void Renderer::SetFPS(float fps)
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 {
+	srand(time(NULL));
 
 	glfwSetErrorCallback(Error_callback);
     glewExperimental = GL_TRUE;
@@ -227,7 +250,9 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
 	s_PicturesShader = new ShaderProgram(GenVertexShader(), GenFragmentShader(), ShaderStringType::Content);
-	s_LoadingShader = new ShaderProgram(GenVertexShader(), GenLoadingFragShader(), ShaderStringType::Content);
+	s_FadeShader = new ShaderProgram(GenVertexShader(), GenFadeFragShader(), ShaderStringType::Content);
+	s_LoadBarShader = new ShaderProgram(GenVertexShader(), GenLoadBarFragShader(), ShaderStringType::Content);
+
 	Vertex vertices[] =
 	{
 		//GL UVs ORDERING
@@ -249,7 +274,6 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	s_PicturesShader->SetAsCurrent();
 	LoadInterfaceTextures();
 
-	
 }
 
 void Renderer::Run()
@@ -300,17 +324,21 @@ void Renderer::Run()
 
 		else if(s_RendererState == RendererState::Loading)
 		{
-			s_PicturesShader->SetAsCurrent();
+			DisplayLoadingScreen(0);
+			Stopwatch sw;
+			sw.Start();
 			if(LoadSet(s_Name)) s_RendererState = RendererState::WaitingForUser;
 			else s_RendererState = RendererState::FailedToLoad;
+			sw.Stop();
+			std::cout << "LOADING IMAGES TOOK: " << std::to_string(sw.ElapsedTime()) << std::endl;
 
+			lp = 0;
 			// flush events that happened while loading
 			glfwPollEvents();
 			
 		}
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
-			
 			
 			DisplayWaitForUserScreen();
 			sizeCached = s_Pictures.size();
@@ -331,7 +359,6 @@ void Renderer::Run()
 
 		}
 
-
 	} while (!glfwWindowShouldClose(s_GLWindow));
 
 	s_GlobalTimeThreadRunningFlag = false;
@@ -351,5 +378,7 @@ Renderer::~Renderer()
 	glDeleteTextures(1, &s_ReadyScrTexID);
 	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
 	delete (s_PicturesShader);
+	delete (s_FadeShader);
+	delete (s_LoadBarShader);
 	delete(s_QuadMesh);
 }
