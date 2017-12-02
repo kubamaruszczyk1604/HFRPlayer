@@ -138,7 +138,9 @@ void Renderer::LoadInterfaceTextures()
 int lp = 0;
 void Renderer::DisplayLoadingScreen(int progress)
 {
+#ifdef SHOW_LOADING_BAR
 	if (lp  < progress)
+#endif
 	{
 		s_LoadBarShader->SetAsCurrent();
 		GLuint loc = glGetUniformLocation(s_LoadBarShader->GetID(), "progress");
@@ -185,8 +187,11 @@ bool Renderer::LoadSet(const std::string & name)
 	// free all textures first
 	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
 	s_Pictures.clear();
-	return FastImgLoader::LoadImages(name, s_Pictures, DisplayLoadingScreen);
-	
+#ifdef SHOW_LOADING_BAR
+	return FastImgLoader::LoadImages(name, s_Pictures,DisplayLoadingScreen);
+#else
+	return FastImgLoader::LoadImages(name, s_Pictures);
+#endif
 }
 
 

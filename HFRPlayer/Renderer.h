@@ -10,7 +10,7 @@
 #include "ShaderProgram.h"
 #include "Stopwatch.h"
 #include "FastImgLoader.h"
-
+#define SHOW_LOADING_BAR
 enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer
 {
