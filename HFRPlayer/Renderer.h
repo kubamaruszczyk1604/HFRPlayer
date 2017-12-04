@@ -22,6 +22,7 @@ private:
 	static void MousePosChange_callback(GLFWwindow* window, double mouseX, double mouseY);
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
+	
 	static Stopwatch s_FpsCountTimer;
 	static Mesh* s_QuadMesh;
 	static ShaderProgram* s_PicturesShader;
@@ -45,6 +46,11 @@ private:
 
 	static float s_GlobalTime;
 	static bool s_GlobalTimeThreadRunningFlag;
+
+
+	// play timer and disappearing video
+	static Stopwatch s_playTimer;
+	static double s_maxViewTime;
 private:
 	
 	static void TimeIncrementFunction();
@@ -65,6 +71,7 @@ public:
 	// Please use this method to load new set of textures. optional socket indicates the network connection which initiates the load
 	static void LoadTextures(const std::string& name, Networking::ExperimentSocketStream* throughConnection = nullptr);
 	static void SetFPS(float fps);
+	static void SetMaximumViewTime(double t) { s_maxViewTime = t;}
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
 

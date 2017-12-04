@@ -6,7 +6,9 @@ struct ConfigInfo
 {
 	std::string NameBase;
 	float FPS;
-	ConfigInfo(const std::string& nameBase, const float fps) :NameBase{ nameBase },FPS{fps}
+	double ViewTime;
+
+	ConfigInfo(const std::string& nameBase, const float fps, double viewTime) : NameBase{ nameBase }, FPS{fps}, ViewTime(viewTime)
 	{}
 };
 

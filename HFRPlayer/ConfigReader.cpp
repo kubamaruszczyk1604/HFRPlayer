@@ -23,7 +23,7 @@ bool ConfigReader::ReadConfig(const string & configFile, ConfigInfo*& outConfig)
 	}
 	if (name == "") return false;
 
-	outConfig = new ConfigInfo(name, fps);
+	outConfig = new ConfigInfo(name, fps, DBL_MAX);
 	
 	return true;
 }

@@ -7,7 +7,9 @@ GLFWwindow* Renderer::s_GLWindow{ nullptr };
 float Renderer::s_GlobalTime{ 0 };
 bool Renderer::s_GlobalTimeThreadRunningFlag{ true };
 
+double Renderer::s_maxViewTime{ DBL_MAX };
 Stopwatch Renderer::s_FpsCountTimer;
+Stopwatch Renderer::s_playTimer;
 uint64_t Renderer::s_TargetFrameTime { 1000000000L /120};
 uint32_t Renderer::s_frameRepeatCount{ 1 };
 uint32_t Renderer::s_framePhase{ 1 };
@@ -45,14 +47,26 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 		}
 		else if (key == GLFW_KEY_ENTER)
 		{
-			if (s_RendererState == RendererState::WaitingForUser) s_RendererState = RendererState::Playing;
+			if (s_RendererState == RendererState::WaitingForUser)
+			{
+				s_RendererState = RendererState::Playing;
+				s_playTimer.Stop();
+				s_playTimer.Start();
+			}
+		}
+		else if (key == GLFW_KEY_BACKSPACE)
+		{
+			s_playTimer.Stop();
+			if (s_RendererState == RendererState::Playing)
+			{
+				s_playTimer.Start();
+			}
 		}
 		else if (s_activeConnection)
 		{ 
 			// should we remap the weird glfw to standard Win VK?
 			s_activeConnection->write((char)key);
 		}
-			//glfwSetWindowShouldClose(window, GL_TRUE);
 	}
 }
 
@@ -94,9 +108,9 @@ std::string Renderer::GenFragmentShader()
 	fragmentShader += "in vec2 oUVs;\n\n";
 	fragmentShader += "out vec4 FragColour;\n\n";
 	fragmentShader += "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
-	fragmentShader += "uniform float time;\n\n";
+	fragmentShader += "uniform float alpha;\n\n";
 	fragmentShader += "void main()\n{\n";
-	fragmentShader += "FragColour = texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
+	fragmentShader += "FragColour = alpha * texture2D(SCT_TEXTURE2D_0,oUVs);\n}\n";
 	return fragmentShader;
 }
 
@@ -275,7 +289,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	int indices[] = { 0,1,2,0,2,3 };
 	s_QuadMesh->CreateIndexBuffer(indices, 6);
 
-	GLuint samplerID = glGetUniformLocation(s_PicturesShader->GetID(), "SCT_TEXTURE2D_0"); 
+	GLuint samplerID = glGetUniformLocation(s_PicturesShader->GetID(), "SCT_TEXTURE2D_0");
 	glUniform1i(samplerID, 0);
 	glActiveTexture(GL_TEXTURE0);
 	s_PicturesShader->SetAsCurrent();
@@ -291,6 +305,9 @@ void Renderer::Run()
 	s_FpsCountTimer.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
+
+	GLuint alphaLoc = glGetUniformLocation(s_PicturesShader->GetID(), "alpha");
+
 	// main loop
 	do
 	{
@@ -310,6 +327,7 @@ void Renderer::Run()
 			}
 			glBindTexture(GL_TEXTURE_2D, s_Pictures[s_CurrentIndex]);
 			s_QuadMesh->Draw();
+			glUniform1f(alphaLoc, std::pow(std::min(1., std::max(0., s_maxViewTime - s_playTimer.ElapsedTime())), 40.));
 
 			while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
 			{

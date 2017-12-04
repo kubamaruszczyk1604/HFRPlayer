@@ -28,6 +28,7 @@ int main(int argc, char** args)
 	{
 		std::string name = "";
 		float fps = -1;
+		double timeLimit = -1;
 		std::cout << "ARGS PROVIDED..." << std::endl;
 		if (argc > 1) { name = std::string(args[1]); } // name base (formant) provided
 		if (argc > 2) // fps provided..
@@ -43,7 +44,26 @@ int main(int argc, char** args)
 				std::cout << "Incorrect FPS argument --> NO FPS LIMIT WILL BE APPLIED!" << std::endl;
 			}
 		}
-		conf = new ConfigInfo(std::string(args[1]), fps);
+		if (argc > 3) // time limit provided
+		{
+			try // check if floating point number.
+			{
+				timeLimit = std::stod(std::string(args[3]));
+				std::cout << timeLimit << std::endl;
+			}
+			catch (std::exception& e) // not a double
+			{
+				timeLimit = -1;
+				std::cout << "Incorrect view time limit argument --> NO dimming!" << std::endl;
+			}
+		}
+
+		if (timeLimit <= 0)
+		{
+			timeLimit = DBL_MAX;
+		}
+
+		conf = new ConfigInfo(std::string(args[1]), fps, timeLimit);
 	}
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
@@ -54,9 +74,10 @@ int main(int argc, char** args)
 	///////////////  IMAGE LOADING AND RENDERING ////////////////
 
 	// Init OpenGL
-	Renderer::Init(1900, 1024, "FPS", true); 
+	Renderer::Init(2560, 1440, "FPS", true); 
 	Renderer::SetFPS(conf->FPS);
 	Renderer::LoadTextures(conf->NameBase);
+	Renderer::SetMaximumViewTime(conf->ViewTime);
 
 	// Renderer loop(blocking)
 	Renderer::Run();
