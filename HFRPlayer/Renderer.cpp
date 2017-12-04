@@ -209,6 +209,8 @@ void Renderer::LoadTextures(const std::string & name, Networking::ExperimentSock
 
 void Renderer::SetFPS(float fps)
 {
+	std::cout << "setting fps " << fps << std::endl;
+
 	// round down to the nearest integer
 	int aFps = (int)fps;
 

@@ -50,9 +50,9 @@ void ExperimentSocketStream::sendLoop()
 void ExperimentSocketStream::receiveLoop()
 {
 	char charBuff = 0;
-	std::ostringstream stringBuff;
-
-
+	char command = 0;
+	std::stringstream stringBuff;
+	
 	int res = 1;
 	while (!m_shouldClose)
 	{
@@ -62,7 +62,11 @@ void ExperimentSocketStream::receiveLoop()
 
 			if (res > 0)
 			{
-				if (charBuff != '#')
+				if (!command)
+				{
+					command = charBuff;
+				}
+				else if (charBuff != '#')
 				{
 					// new character
 					stringBuff << charBuff;
@@ -86,10 +90,30 @@ void ExperimentSocketStream::receiveLoop()
 		{
 			// full string loaded
 			std::cout << "received string from Matlab" << std::endl;
-			Renderer::LoadTextures(stringBuff.str(), this);
+
+			// demultiplex based on command
+			// F: framerate (int)
+			// P: path (stirng)
+			if (command == 'P')
+			{
+				Renderer::LoadTextures(stringBuff.str(), this);
+			}
+			else if (command == 'F')
+			{
+				int fps = 165;
+				stringBuff >> fps;
+				Renderer::SetFPS(fps);
+				std::cout << "setting frame rate to " << fps << std::endl;
+			}
+			else
+			{
+				std::cout << "ignoring network packet, no command found." << std::endl;
+			}
+			
 			stringBuff.str("");
 			stringBuff.clear();
 			charBuff = 0;
+			command = 0;
 		}
 	}
 }

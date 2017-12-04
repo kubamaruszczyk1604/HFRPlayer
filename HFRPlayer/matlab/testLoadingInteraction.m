@@ -26,13 +26,13 @@ while 1
     
 disp('requesting a video');
     if c == 49
-        fwrite(networkSocket, [paths{1} '#'],'uint8');
+        fwrite(networkSocket, ['P' paths{1} '#'],'uint8');
     elseif c == 50
-        fwrite(networkSocket, [paths{2} '#'],'uint8');
+        fwrite(networkSocket, ['P' paths{2} '#'],'uint8');
     elseif c == 51
-        fwrite(networkSocket, [paths{3} '#'],'uint8');
+        fwrite(networkSocket, ['P' paths{3} '#'],'uint8');
     elseif c == 52
-        fwrite(networkSocket, [paths{4} '#'],'uint8');
+        fwrite(networkSocket, ['P' paths{4} '#'],'uint8');
     end
     
     while (networkSocket.BytesAvailable == 0)
