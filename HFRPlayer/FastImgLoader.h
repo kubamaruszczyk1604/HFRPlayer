@@ -7,7 +7,7 @@
 #include "GLTextureLoader.h"
 #include "SafeQueue.h"
 
-#define HFR_ORDERING_TEST 1
+//#define HFR_ORDERING_TEST 1
 
 typedef void(*LOADING_PROGRESS_CALLBACK)(int progress);
 

@@ -1,7 +1,8 @@
 #include "Renderer.h"
 #include "FastImgLoader.h"
 #include <iostream>
-#include <cstdlib>
+#include <chrono>
+#include <thread>
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
 float Renderer::s_GlobalTime{ 0 };
@@ -87,6 +88,7 @@ void Renderer::TimeIncrementFunction()
 	while (s_GlobalTimeThreadRunningFlag)
 	{
 		s_GlobalTime = s_TimeDeltaSW.ElapsedTime();	
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	s_TimeDeltaSW.Stop();
 }

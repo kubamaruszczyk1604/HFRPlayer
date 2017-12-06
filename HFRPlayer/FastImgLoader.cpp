@@ -73,7 +73,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, in
 	int w = FreeImage_GetWidth(bitmap);
 	int h = FreeImage_GetHeight(bitmap);
 	uint64_t frameSize = w * h * 3;
-	int maxFrameCount = (int)(8ULL * 1024ULL * 1024ULL * 1024ULL / frameSize);
+	int maxFrameCount = (int)(6ULL * 1024ULL * 1024ULL * 1024ULL / frameSize);
 	GLTextureLoader::FreeImageMemory(bitmap);
 
 	// DECODE AND LOAD INTO SYSTEM MEMORY -- PROIDUCER THREADS SPAWNED HERE ---
