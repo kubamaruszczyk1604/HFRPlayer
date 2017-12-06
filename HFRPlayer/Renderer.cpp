@@ -5,8 +5,7 @@
 #include <thread>
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
-float Renderer::s_GlobalTime{ 0 };
-bool Renderer::s_GlobalTimeThreadRunningFlag{ true };
+Stopwatch Renderer::s_GlobalClock;
 
 double Renderer::s_maxViewTime{ DBL_MAX };
 Stopwatch Renderer::s_FpsCountTimer;
@@ -78,19 +77,6 @@ void Renderer::MousePosChange_callback(GLFWwindow * window, double mouseX, doubl
 
 void Renderer::MouseButtonPress_callback(GLFWwindow * window, int button, int press_release, int mods)
 {
-}
-
-
-void Renderer::TimeIncrementFunction()
-{
-	Stopwatch s_TimeDeltaSW;
-	s_TimeDeltaSW.Start();
-	while (s_GlobalTimeThreadRunningFlag)
-	{
-		s_GlobalTime = s_TimeDeltaSW.ElapsedTime();	
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
-	}
-	s_TimeDeltaSW.Stop();
 }
 
 std::string Renderer::GenVertexShader()
@@ -175,7 +161,7 @@ void Renderer::DisplayWaitForUserScreen()
 	s_FadeShader->SetAsCurrent();
 
 	GLuint loct = glGetUniformLocation(s_FadeShader->GetID(), "time");
-	glUniform1f(loct, s_GlobalTime*1.5);
+	glUniform1f(loct, s_GlobalClock.ElapsedTime() * 1.5);
 	GLuint locc = glGetUniformLocation(s_FadeShader->GetID(), "col");
 	const float col[] = { 1.0,1.0,1.0 };
 	glUniform3f(locc, 0.41, 0.41, 0);
@@ -189,7 +175,7 @@ void Renderer::DisplayNoFilesFoundScreen()
 	s_FadeShader->SetAsCurrent();
 
 	GLuint loct = glGetUniformLocation(s_FadeShader->GetID(), "time");
-	glUniform1f(loct, s_GlobalTime*1);
+	glUniform1f(loct, s_GlobalClock.ElapsedTime());
 	GLuint locc = glGetUniformLocation(s_FadeShader->GetID(), "col");
 	const float col[] = { 1.0,1.0,1.0 };
 	glUniform3f(locc, 0.3, 0.3, 0);
@@ -303,10 +289,9 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 
 void Renderer::Run()
 {
-	std::thread globalTimeThread(TimeIncrementFunction);
-
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
+	s_GlobalClock.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
 
@@ -321,8 +306,7 @@ void Renderer::Run()
 			s_PicturesShader->SetAsCurrent();
 			if (s_framePhase >= s_frameRepeatCount)
 			{
-				s_CurrentIndex++;
-				if (s_CurrentIndex >= sizeCached) s_CurrentIndex = 0;
+				s_CurrentIndex = (s_CurrentIndex + 1) % sizeCached;
 				s_framePhase = 1;
 			}
 			else
@@ -390,8 +374,7 @@ void Renderer::Run()
 
 	} while (!glfwWindowShouldClose(s_GLWindow));
 
-	s_GlobalTimeThreadRunningFlag = false;
-	globalTimeThread.join();
+	s_GlobalClock.Stop();
 	glfwDestroyWindow(s_GLWindow);
 	glfwTerminate();
 }

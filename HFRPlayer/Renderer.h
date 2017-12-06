@@ -45,8 +45,7 @@ private:
 	static std::string s_Name;
 	static int s_LoadOffset;
 
-	static float s_GlobalTime;
-	static bool s_GlobalTimeThreadRunningFlag;
+	static Stopwatch s_GlobalClock;
 
 
 	// play timer and disappearing video
@@ -54,7 +53,6 @@ private:
 	static double s_maxViewTime;
 private:
 	
-	static void TimeIncrementFunction();
 	static std::string GenVertexShader();
 	static std::string GenFragmentShader();
 	static std::string GenFadeFragShader();
