@@ -7,7 +7,7 @@
 #include "GLTextureLoader.h"
 #include "SafeQueue.h"
 
-#define HFR_ORDERING_TEST
+#define HFR_ORDERING_TEST 1
 
 typedef void(*LOADING_PROGRESS_CALLBACK)(int progress);
 
@@ -32,7 +32,10 @@ private:
 	static std::mutex s_ThreadCountMutex;
 	static int s_BufferItemCount;
 
-	static void LoadSequence(const std::string& formant, int startAtIndex);
+	// load a sequence of images with the provided format and offset. 
+	// maxCount specifies the maximum number of images to be loaded by this given call
+	// loadOffset specifies the global load offset
+	static void LoadSequence(const std::string& formant, int threadIndex, int maxCount, int loadOffset);
 
 public:
 	FastImgLoader() = delete;
@@ -40,7 +43,7 @@ public:
 	FastImgLoader& operator=(const FastImgLoader&) = delete;
 	~FastImgLoader();
 
-	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output, LOADING_PROGRESS_CALLBACK progressCallbackFunction = nullptr);
+	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output, int loadOffset, LOADING_PROGRESS_CALLBACK progressCallbackFunction = nullptr);
 	static bool LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures);
 
 	inline static bool FileExists(const std::string& name)

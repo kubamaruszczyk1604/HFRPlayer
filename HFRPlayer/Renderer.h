@@ -43,6 +43,7 @@ private:
 	static GLuint s_NoFilesScrTexID;
 
 	static std::string s_Name;
+	static int s_LoadOffset;
 
 	static float s_GlobalTime;
 	static bool s_GlobalTimeThreadRunningFlag;
@@ -69,7 +70,7 @@ private:
 public:
 
 	// Please use this method to load new set of textures. optional socket indicates the network connection which initiates the load
-	static void LoadTextures(const std::string& name, Networking::ExperimentSocketStream* throughConnection = nullptr);
+	static void LoadTextures(const std::string& name, int offset, Networking::ExperimentSocketStream* throughConnection = nullptr);
 	static void SetFPS(float fps);
 	static void SetMaximumViewTime(double t) { s_maxViewTime = t;}
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);

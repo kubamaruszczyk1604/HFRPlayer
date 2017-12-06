@@ -1,3 +1,4 @@
 *** THIS IS HFR CONFIG FILE ***
-NAME C:\full_half\test
-FPS 165
+NAME C:\Users\gd355\Desktop\vids\battleField\img
+FPS 120
+OFFSET 1

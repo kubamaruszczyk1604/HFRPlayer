@@ -7,8 +7,13 @@ struct ConfigInfo
 	std::string NameBase;
 	float FPS;
 	double ViewTime;
+	int Offset;
 
-	ConfigInfo(const std::string& nameBase, const float fps, double viewTime) : NameBase{ nameBase }, FPS{fps}, ViewTime(viewTime)
+	ConfigInfo(const std::string& nameBase, const float fps, double viewTime, int offset) : 
+		NameBase{ nameBase }, 
+		FPS{fps}, 
+		ViewTime(viewTime),
+		Offset(offset)
 	{}
 };
 

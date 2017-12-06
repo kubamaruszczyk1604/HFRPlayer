@@ -96,7 +96,8 @@ void ExperimentSocketStream::receiveLoop()
 			// P: path (stirng)
 			if (command == 'P')
 			{
-				Renderer::LoadTextures(stringBuff.str(), this);
+				// TODO: find load offset. For now, assume 0
+				Renderer::LoadTextures(stringBuff.str(), 0, this);
 			}
 			else if (command == 'F')
 			{

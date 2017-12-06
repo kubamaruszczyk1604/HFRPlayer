@@ -30,6 +30,7 @@ GLuint Renderer::s_ReadyScrTexID{ 0 };
 GLuint Renderer::s_NoFilesScrTexID{ 0 };
 
 std::string Renderer::s_Name{ "" };
+int Renderer::s_LoadOffset{ 0 };
 
 void Renderer::Error_callback(int error, const char * description)
 {
@@ -202,17 +203,18 @@ bool Renderer::LoadSet(const std::string & name)
 	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
 	s_Pictures.clear();
 #ifdef SHOW_LOADING_BAR
-	return FastImgLoader::LoadImages(name, s_Pictures,DisplayLoadingScreen);
+	return FastImgLoader::LoadImages(name, s_Pictures, s_LoadOffset, DisplayLoadingScreen);
 #else
-	return FastImgLoader::LoadImages(name, s_Pictures);
+	return FastImgLoader::LoadImages(name, s_Pictures, s_LoadOffset);
 #endif
 }
 
 
-void Renderer::LoadTextures(const std::string & name, Networking::ExperimentSocketStream* connection)
+void Renderer::LoadTextures(const std::string & name, int offset, Networking::ExperimentSocketStream* connection)
 {
 	if (s_RendererState == RendererState::Loading) return;
 	s_Name = name;
+	s_LoadOffset = offset;
 	s_RendererState = RendererState::Loading;
 
 	if (connection)

@@ -22,12 +22,13 @@ using namespace std;
 FastImgLoader::~FastImgLoader()
 {
 }
-void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
+void FastImgLoader::LoadSequence(const string& formant, int threadIndex, int maxCount, int loadOffset)
 {
-	int counter = startAtIndex;
+	int counter = threadIndex + loadOffset;
+	int stopIndex = counter + maxCount * MAX_THREAD_COUNT;
 	string fileName = formant + std::to_string(counter) + ".png";
 
-	while (FileExists(fileName))
+	while (counter < stopIndex && FileExists(fileName))
 	{	
 		while (s_BufferItemCount > BUFFER_SIZE) // this is to prevent buffer overflow. Gives consumer time to process items in the queues
 		{
@@ -42,9 +43,9 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 			s_ConsoleMutex.unlock();
 		}
 
-		s_Queues[startAtIndex].enqueue(bitmap);
+		s_Queues[threadIndex].enqueue(bitmap);
 #ifdef HFR_ORDERING_TEST
-		s_FileNumbersReadTestQueue[startAtIndex].enqueue(counter);
+		s_FileNumbersReadTestQueue[threadIndex].enqueue(counter);
 #endif // HFR_ORDERING_TEST
 		counter+=MAX_THREAD_COUNT;
 		s_CounterMutex.lock();
@@ -58,25 +59,33 @@ void FastImgLoader::LoadSequence(const string& formant, int startAtIndex)
 
 }
 
-bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, LOADING_PROGRESS_CALLBACK progressCallbackFunction)
+bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, int loadOffset, LOADING_PROGRESS_CALLBACK progressCallbackFunction)
 {
 	output.clear();
-	string fileName = formant + std::to_string(0) + ".png";
+	string fileName = formant + std::to_string(loadOffset) + ".png";
 	cout << "Starting from file: " << fileName << endl;
 
 	//check if there is at least one file
 	if (!FileExists(fileName)) return false;
 
+	// find how many images can we fit in the GPU memory (assuming 10GB)
+	FIBITMAP* bitmap = GLTextureLoader::LoadImageRAM(fileName);
+	int w = FreeImage_GetWidth(bitmap);
+	int h = FreeImage_GetHeight(bitmap);
+	uint64_t frameSize = w * h * 3;
+	int maxFrameCount = (int)(8ULL * 1024ULL * 1024ULL * 1024ULL / frameSize);
+	GLTextureLoader::FreeImageMemory(bitmap);
+
 	// DECODE AND LOAD INTO SYSTEM MEMORY -- PROIDUCER THREADS SPAWNED HERE ---
 	vector<thread> threads;
 	for (int i = 0; i < MAX_THREAD_COUNT; ++i)
 	{
-		if (FileExists(formant + std::to_string(i) + ".png"))
+		if (FileExists(formant + std::to_string(i + loadOffset) + ".png"))
 		{		
 		    s_ThreadCountMutex.lock();
 			s_RunningThreads++;
 			s_ThreadCountMutex.unlock();
-			threads.push_back(thread(LoadSequence, formant, i));
+			threads.push_back(thread(LoadSequence, formant, i, maxFrameCount / MAX_THREAD_COUNT, loadOffset));
 		}
 	} 
 	_sleep(10);

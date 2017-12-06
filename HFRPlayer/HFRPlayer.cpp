@@ -29,6 +29,7 @@ int main(int argc, char** args)
 		std::string name = "";
 		float fps = -1;
 		double timeLimit = -1;
+		int offset = 0;
 		std::cout << "ARGS PROVIDED..." << std::endl;
 		if (argc > 1) { name = std::string(args[1]); } // name base (formant) provided
 		if (argc > 2) // fps provided..
@@ -57,13 +58,26 @@ int main(int argc, char** args)
 				std::cout << "Incorrect view time limit argument --> NO dimming!" << std::endl;
 			}
 		}
+		if (argc > 4) // offset provided
+		{
+			try // check if int
+			{
+				offset = std::stoi(std::string(args[4]));
+				std::cout << offset << std::endl;
+			}
+			catch (std::exception& e) // not an int
+			{
+				offset = 0;
+				std::cout << "No offset provided. Defaulting to 0" << std::endl;
+			}
+		}
 
 		if (timeLimit <= 0)
 		{
 			timeLimit = DBL_MAX;
 		}
 
-		conf = new ConfigInfo(std::string(args[1]), fps, timeLimit);
+		conf = new ConfigInfo(std::string(args[1]), fps, timeLimit, offset);
 	}
 
 	std::cout << "NAME BASE: " << conf->NameBase << ", FPS REQUEST: " << conf->FPS << std::endl;
@@ -76,7 +90,7 @@ int main(int argc, char** args)
 	// Init OpenGL
 	Renderer::Init(2560, 1440, "FPS", true); 
 	Renderer::SetFPS(conf->FPS);
-	Renderer::LoadTextures(conf->NameBase);
+	Renderer::LoadTextures(conf->NameBase, conf->Offset);
 	Renderer::SetMaximumViewTime(conf->ViewTime);
 
 	// Renderer loop(blocking)
