@@ -59,9 +59,9 @@ void FastImgLoader::LoadSequence(const string& formant, int threadIndex, int max
 
 }
 
-bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, int loadOffset, LOADING_PROGRESS_CALLBACK progressCallbackFunction)
+bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>* output, int loadOffset, LoadingScreenRenderer* renderer)
 {
-	output.clear();
+	output->clear();
 	string fileName = formant + std::to_string(loadOffset) + ".png";
 	cout << "Starting from file: " << fileName << endl;
 
@@ -101,7 +101,7 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, in
 		{
 			_sleep(0);
 		}
-		output.push_back(GLTextureLoader::PushToGPU(bitmap));
+		output->push_back(GLTextureLoader::PushToGPU(bitmap));
 #ifdef HFR_ORDERING_TEST
 		int index;
 		while (!s_FileNumbersReadTestQueue[queueIndex].dequeue(index))
@@ -116,7 +116,11 @@ bool FastImgLoader::LoadImages(const string& formant, vector<GLuint>& output, in
 		s_CounterMutex.unlock();
 		queueIndex++;
 		totalConsumed++;
-		if (progressCallbackFunction) progressCallbackFunction(totalConsumed);
+
+		if (renderer && totalConsumed % 25 == 0)
+		{
+			renderer->updateProgress(totalConsumed);
+		}
 		glfwPollEvents();
 	}
 	

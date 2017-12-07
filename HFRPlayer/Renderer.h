@@ -7,62 +7,55 @@
 #include "ExperimentSocketStream.h"
 
 #include "Mesh.h"
-#include "ShaderProgram.h"
+
 #include "Stopwatch.h"
 #include "FastImgLoader.h"
-#define SHOW_LOADING_BAR
+
+
+#include "ISceneRenderer.h"
+#include "IVideoSceneRenderer.h"
+#include "LoadingScreenRenderer.h"
+
 enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer
 {
 private:
+	// window
 	static GLFWwindow* s_GLWindow;
+	
 	//callbacks
 	static void Error_callback(int error, const char* description);
 	static void Key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void MousePosChange_callback(GLFWwindow* window, double mouseX, double mouseY);
 	static void MouseButtonPress_callback(GLFWwindow* window, int button, int press_release, int mods);
 
-	
-	static Stopwatch s_FpsCountTimer;
-	static Mesh* s_QuadMesh;
-	static ShaderProgram* s_PicturesShader;
-	static ShaderProgram* s_FadeShader;
-	static ShaderProgram* s_LoadBarShader;
-
-	static uint32_t s_framePhase;
-	static uint64_t s_TargetFrameTime;
-	static uint32_t s_frameRepeatCount;
-
-	static RendererState s_RendererState;
-	static std::vector<GLuint> s_Pictures;
-	static unsigned s_CurrentIndex;
+	// FPS counter
 	static unsigned s_FrameCounter;
+	static Stopwatch s_FpsCountTimer;
 
-	static GLuint s_LoadingScrTexID;
-	static GLuint s_ReadyScrTexID;
-	static GLuint s_NoFilesScrTexID;
+	// Gsync
+	static uint32_t s_frameRepeatCount;
+	static uint64_t s_TargetFrameTime;
 
+	// state machine
+	static RendererState s_RendererState;
+
+	// video
+	static std::vector<GLuint> s_Pictures;
+
+	// config
 	static std::string s_Name;
 	static int s_LoadOffset;
-
-	static Stopwatch s_GlobalClock;
-
-
-	// play timer and disappearing video
-	static Stopwatch s_playTimer;
 	static double s_maxViewTime;
 private:
-	
-	static std::string GenVertexShader();
-	static std::string GenFragmentShader();
-	static std::string GenFadeFragShader();
-	static std::string GenLoadBarFragShader();
-	static void LoadInterfaceTextures();
-	static void DisplayLoadingScreen(int progress);
-	static void DisplayWaitForUserScreen();
-	static void DisplayNoFilesFoundScreen();
-	static bool LoadSet(const std::string& name); //Internal, non thread-safe
 
+	// sub renderers
+	static LoadingScreenRenderer* s_loadingScreenRenderer;
+	static ISceneRenderer* s_noFilesRenderer;
+	static IVideoSceneRenderer* s_VideoSceneRenderer;
+	static ISceneRenderer* s_waitForInputRenderer;
+
+	// active network
 	static Networking::ExperimentSocketStream* s_activeConnection;
 
 public:
@@ -70,11 +63,12 @@ public:
 	// Please use this method to load new set of textures. optional socket indicates the network connection which initiates the load
 	static void LoadTextures(const std::string& name, int offset, Networking::ExperimentSocketStream* throughConnection = nullptr);
 	static void SetFPS(float fps);
-	static void SetMaximumViewTime(double t) { s_maxViewTime = t;}
+	static void SetMaximumViewTime(double t) { s_maxViewTime = t; s_VideoSceneRenderer->setMaximumViewTime(s_maxViewTime); }
 	static bool Init(int w, int h, std::string title, bool fullScreen = 0);
 	static void Run();
 
-
+	// request a buffer swap now
+	static void RequestBufferSwap();
 
 	//  Class intended as static
 	Renderer() = delete;

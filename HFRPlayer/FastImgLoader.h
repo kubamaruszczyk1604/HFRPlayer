@@ -6,10 +6,9 @@
 
 #include "GLTextureLoader.h"
 #include "SafeQueue.h"
+#include "LoadingScreenRenderer.h"
 
 //#define HFR_ORDERING_TEST 1
-
-typedef void(*LOADING_PROGRESS_CALLBACK)(int progress);
 
 class FastImgLoader
 {
@@ -43,7 +42,7 @@ public:
 	FastImgLoader& operator=(const FastImgLoader&) = delete;
 	~FastImgLoader();
 
-	static bool LoadImages(const std::string& formant, std::vector<GLuint>& output, int loadOffset, LOADING_PROGRESS_CALLBACK progressCallbackFunction = nullptr);
+	static bool LoadImages(const std::string& formant, std::vector<GLuint>* output, int loadOffset, LoadingScreenRenderer* renderer = nullptr);
 	static bool LoadImagesSingleThread(const std::string& formant, std::vector<GLuint>& textures);
 
 	inline static bool FileExists(const std::string& name)

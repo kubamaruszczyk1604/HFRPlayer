@@ -5,6 +5,8 @@
 #include <exception>
 #include <iostream>
 
+#define FULL_SCREEN 0
+
 
 int main(int argc, char** args)
 {
@@ -24,7 +26,7 @@ int main(int argc, char** args)
 	Networking::ExperimentSocketManager::initialise(30000);
 
 	// Init OpenGL
-	Renderer::Init(2560, 1440, "FPS", true); 
+	Renderer::Init(2560, 1440, "FPS", FULL_SCREEN);
 	Renderer::SetFPS(conf->FPS);
 	Renderer::LoadTextures(conf->NameBase, conf->Offset);
 	Renderer::SetMaximumViewTime(conf->ViewTime);
