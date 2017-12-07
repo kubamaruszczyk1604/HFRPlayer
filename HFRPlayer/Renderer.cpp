@@ -83,7 +83,7 @@ std::string Renderer::GenVertexShader()
 {
 	std::string vertexShader = "#version 330\n\n";
 	vertexShader += "layout(location = 0) in vec3 vertex_position;\n";
-	vertexShader += "layout(location = 2) in vec2 uvs;\n\n";
+	vertexShader += "layout(location = 1) in vec2 uvs;\n\n";
 	vertexShader += "out vec2 oUVs;\n\n";
 	vertexShader += "void main()\n{\n";
 	vertexShader += "  oUVs = uvs;\n";
@@ -267,10 +267,10 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	Vertex vertices[] =
 	{
 		//GL UVs ORDERING
-		Vertex(glm::vec3(-1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 1)),
-		Vertex(glm::vec3(-1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(0, 0)),
-		Vertex(glm::vec3(1, -1, 0), glm::vec3(0, 0, 0), glm::vec2(1,0)),
-		Vertex(glm::vec3(1, 1, 0), glm::vec3(0, 0, 0), glm::vec2(1, 1))
+		Vertex(glm::vec3(-1, 1, 0), glm::vec2(0, 1)),
+		Vertex(glm::vec3(-1, -1, 0), glm::vec2(0, 0)),
+		Vertex(glm::vec3(1, -1, 0), glm::vec2(1,0)),
+		Vertex(glm::vec3(1, 1, 0), glm::vec2(1, 1))
 	};
 
 	s_QuadMesh = new Mesh();

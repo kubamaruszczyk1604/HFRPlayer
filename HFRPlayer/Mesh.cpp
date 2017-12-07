@@ -1,5 +1,5 @@
 #include "Mesh.h"
-
+#include <GLFW/glfw3.h>  
 
 Mesh::Mesh() :ptr_VBO{ 0,0 }, ptr_VAO{ 0 }, m_IndexCount{ 0 }
 {
@@ -15,19 +15,17 @@ bool Mesh::Create(Vertex vertices[], int numVertices)
 	//VBO
 	glGenBuffers(2, ptr_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, ptr_VBO[0]);
-	glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(Vertex), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, numVertices * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
 	//VAO
 	glGenVertexArrays(1, &ptr_VAO);
 	glBindVertexArray(ptr_VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, ptr_VBO[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const GLvoid*>(3 * sizeof(float)));
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const GLvoid*>(6 * sizeof(float)));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const GLvoid*>(3 * sizeof(float)));
 
 	glEnableVertexAttribArray(0); //position
-	glEnableVertexAttribArray(1); //normal
-	glEnableVertexAttribArray(2); //uv
+	glEnableVertexAttribArray(1); //uv
 
 	m_VertexCount = numVertices;
 	return true;

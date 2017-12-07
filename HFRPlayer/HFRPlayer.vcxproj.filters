@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Networking">
       <UniqueIdentifier>{29dd1f56-74e2-4e40-81d1-07d3b061af85}</UniqueIdentifier>
     </Filter>
@@ -21,6 +17,15 @@
     </Filter>
     <Filter Include="Networking\Source Files">
       <UniqueIdentifier>{0a24d97d-6cdf-41f4-b108-ce2e3204eb3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config">
+      <UniqueIdentifier>{33ccb247-662c-43dc-9e50-a9cab2c01649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config\Header Files">
+      <UniqueIdentifier>{822bd82c-5d6a-4cf7-b58f-23ebc3bce660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Config\Source Files">
+      <UniqueIdentifier>{4a5671b9-1885-4697-b413-7d7fb037a0bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +75,12 @@
     <ClInclude Include="ExperimentSocketManager.h">
       <Filter>Networking\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Configuration.h">
+      <Filter>Config\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigurationFactory.h">
+      <Filter>Config\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -93,9 +104,6 @@
     <ClCompile Include="Stopwatch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FastImgLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -110,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="ExperimentSocketManager.cpp">
       <Filter>Networking\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigurationFactory.cpp">
+      <Filter>Config\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
