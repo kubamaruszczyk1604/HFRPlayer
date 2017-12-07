@@ -3,6 +3,12 @@
 #include <sstream>
 #include <iostream>
 
+#define FOUR_SPLIT 1
+#define TWO_SPLIT 2
+
+#define SPLIT_TYPE TWO_SPLIT
+
+
 PrototypeVideoRenderer::PrototypeVideoRenderer(std::vector<GLuint>* images) :
 	IVideoSceneRenderer(images)
 {
@@ -46,9 +52,16 @@ std::string PrototypeVideoRenderer::genFragShader()
 	s << "uniform sampler2D  SCT_TEXTURE2D_0;\n\n";
 	s << "uniform sampler2D  SCT_TEXTURE2D_1;\n\n";
 	s << "void main()\n{\n";
-	s << "vec4 tex0 =  texture2D(SCT_TEXTURE2D_0,vec2(oUVs.x * 2.f, oUVs.y * 2.f));\n";
-	s << "vec4 tex1 =  texture2D(SCT_TEXTURE2D_1,vec2(oUVs.x * 2.f, oUVs.y * 2.f));\n";
-	s << "FragColour = mix(tex0, tex1, (sign(oUVs.x - 0.5) + 1) * 0.5); \n}\n";
+	s << "float right = (sign(oUVs.x - 0.5) + 1) * 0.5;\n";
+
+#if SPLIT_TYPE == FOUR_SPLIT
+	s << "vec4 tex0 =  texture2D(SCT_TEXTURE2D_0,oUVs*2);\n";
+	s << "vec4 tex1 =  texture2D(SCT_TEXTURE2D_1,oUVs*2);\n";
+#else
+	s << "vec4 tex0 =  texture2D(SCT_TEXTURE2D_0,vec2(oUVs.x + 0.25, oUVs.y));\n";
+	s << "vec4 tex1 =  texture2D(SCT_TEXTURE2D_1,vec2(oUVs.x - 0.25, oUVs.y));\n";
+#endif
+	s << "FragColour = mix(tex0, tex1, right); \n}\n";
 	return s.str();
 }
 

@@ -192,6 +192,7 @@ void Renderer::Run()
 			s_RendererState = s_loadingScreenRenderer->LoadSet(s_Name, &s_Pictures, s_LoadOffset) ? 
 				RendererState::WaitingForUser : RendererState::FailedToLoad;
 			glfwPollEvents();
+			verifyNoError();
 		}
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
