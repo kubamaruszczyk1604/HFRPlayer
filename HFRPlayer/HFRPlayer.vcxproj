@@ -167,6 +167,8 @@ copy "$(SolutionDir)HFRPlayer\InterfaceImages\no_img_found.png" "$(TargetDir)Int
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Configuration.h" />
+    <ClInclude Include="ConfigurationFactory.h" />
     <ClInclude Include="ExperimentSocketManager.h" />
     <ClInclude Include="FastImgLoader.h" />
     <ClInclude Include="GLTextureLoader.h" />
@@ -183,7 +185,7 @@ copy "$(SolutionDir)HFRPlayer\InterfaceImages\no_img_found.png" "$(TargetDir)Int
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ConfigReader.cpp" />
+    <ClCompile Include="ConfigurationFactory.cpp" />
     <ClCompile Include="ExperimentSocketManager.cpp" />
     <ClCompile Include="ExperimentSocketStream.cpp" />
     <ClCompile Include="FastImgLoader.cpp" />
