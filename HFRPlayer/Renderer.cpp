@@ -6,6 +6,7 @@
 #include "NoFilesSceneRenderer.h"
 #include "VideoSceneRenderer.h"
 #include "WaitForInputSceneRenderer.h"
+#include "PrototypeVideoRenderer.h"
 
 #include <iostream>
 #include <chrono>
@@ -63,7 +64,7 @@ void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int acti
 			}
 		}
 		else if (s_activeConnection)
-		{ 
+		{
 			// should we remap the weird glfw to standard Win VK?
 			s_activeConnection->write((char)key);
 		}
@@ -109,17 +110,17 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	srand(time(NULL));
 
 	glfwSetErrorCallback(Error_callback);
-    glewExperimental = GL_TRUE;
+	glewExperimental = GL_TRUE;
 
-	if (!glfwInit()){ return false;}
-	
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);  
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); 
+	if (!glfwInit()) { return false; }
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	
-	if(fullScreen)
+
+	if (fullScreen)
 		s_GLWindow = glfwCreateWindow(w, h, title.c_str(), glfwGetPrimaryMonitor(), NULL);
-	else 
+	else
 		s_GLWindow = glfwCreateWindow(w, h, title.c_str(), NULL, NULL);
 
 	if (!s_GLWindow)
@@ -128,7 +129,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
-   
+
 	glfwMakeContextCurrent(s_GLWindow);
 	glfwSwapInterval(1);
 
@@ -143,12 +144,18 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	ISceneRenderer::initialise();
 	s_loadingScreenRenderer = new LoadingScreenRenderer();
 	s_noFilesRenderer = new NoFilesSceneRenderer();
-	s_VideoSceneRenderer = new VideoSceneRenderer(&s_Pictures);
 	s_waitForInputRenderer = new WaitForInputSceneRenderer();
+#if PROTOTYPE_MODE
+	s_VideoSceneRenderer = new PrototypeVideoRenderer(&s_Pictures);
+#else
+	s_VideoSceneRenderer = new VideoSceneRenderer(&s_Pictures);
+#endif
 }
 
 void Renderer::Run()
 {
+	verifyNoError();
+
 	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
@@ -198,6 +205,7 @@ void Renderer::Run()
 			glfwSwapBuffers(s_GLWindow);
 			glfwPollEvents();
 		}
+		verifyNoError();
 
 	} while (!glfwWindowShouldClose(s_GLWindow));
 

@@ -16,6 +16,11 @@
 #include "IVideoSceneRenderer.h"
 #include "LoadingScreenRenderer.h"
 
+#include <iostream>
+
+#define PROTOTYPE_MODE 1
+#define GL_ERROR_DEBUG 1
+
 enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer
 {
@@ -69,6 +74,17 @@ public:
 
 	// request a buffer swap now
 	static void RequestBufferSwap();
+
+	static inline void verifyNoError()
+	{
+#ifdef GL_ERROR_DEBUG
+		if (GLenum error = glGetError())
+		{
+			std::cout << "OpenGL error: " << error << " - " << glewGetErrorString(error);
+			throw ("OpenGL is in an invalid state");
+		}
+#endif
+	}
 
 	//  Class intended as static
 	Renderer() = delete;

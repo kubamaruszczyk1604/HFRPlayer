@@ -178,6 +178,7 @@ copy "$(SolutionDir)HFRPlayer\InterfaceImages\no_img_found.png" "$(TargetDir)Int
     <ClInclude Include="LoadingScreenRenderer.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="NoFilesSceneRenderer.h" />
+    <ClInclude Include="PrototypeVideoRenderer.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="SafeQueue.h" />
     <ClInclude Include="Shader.h" />
@@ -201,6 +202,7 @@ copy "$(SolutionDir)HFRPlayer\InterfaceImages\no_img_found.png" "$(TargetDir)Int
     <ClCompile Include="LoadingScreenRenderer.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NoFilesSceneRenderer.cpp" />
+    <ClCompile Include="PrototypeVideoRenderer.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />

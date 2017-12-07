@@ -49,6 +49,7 @@ void ISceneRenderer::initialiseShader()
 {
 	m_shader = new ShaderProgram(genDefaultVertexShader(), genFragShader(), ShaderStringType::Content);
 	GLuint samplerID = glGetUniformLocation(m_shader->GetID(), "SCT_TEXTURE2D_0");
+	m_shader->SetAsCurrent();
 	glUniform1i(samplerID, 0);
 	glActiveTexture(GL_TEXTURE0);
 }
