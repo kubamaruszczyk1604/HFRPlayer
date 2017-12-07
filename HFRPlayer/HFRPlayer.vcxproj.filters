@@ -30,10 +30,13 @@
     <Filter Include="Rendering">
       <UniqueIdentifier>{66a82ed5-d0dd-4916-8f6f-5c7ea0cde057}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\Header Files">
+    <Filter Include="Rendering\Sub">
+      <UniqueIdentifier>{4a91dc0f-2d35-46f4-9a6b-837a4dd14f5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering\Sub\Header Files">
       <UniqueIdentifier>{e8a65e9d-6ccd-4b5f-98b2-fd7606d87429}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\Source Files">
+    <Filter Include="Rendering\Sub\Source Files">
       <UniqueIdentifier>{5ace0e26-36e5-4365-b61d-45f730ac9545}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -46,9 +49,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Vertex.h">
@@ -91,22 +91,25 @@
       <Filter>Config\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISceneRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScreenRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WaitForInputSceneRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NoFilesSceneRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VideoSceneRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IVideoSceneRenderer.h">
-      <Filter>Rendering\Header Files</Filter>
+      <Filter>Rendering\Sub\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -114,9 +117,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="HFRPlayer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
@@ -150,19 +150,22 @@
       <Filter>Config\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ISceneRenderer.cpp">
-      <Filter>Rendering\Source Files</Filter>
+      <Filter>Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoadingScreenRenderer.cpp">
-      <Filter>Rendering\Source Files</Filter>
+      <Filter>Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WaitForInputSceneRenderer.cpp">
-      <Filter>Rendering\Source Files</Filter>
+      <Filter>Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NoFilesSceneRenderer.cpp">
-      <Filter>Rendering\Source Files</Filter>
+      <Filter>Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VideoSceneRenderer.cpp">
-      <Filter>Rendering\Source Files</Filter>
+      <Filter>Rendering\Sub\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Rendering</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
