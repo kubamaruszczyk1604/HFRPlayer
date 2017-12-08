@@ -1,13 +1,13 @@
 #include "WaitForInputSceneRenderer.h"
 
 #include "GLTextureLoader.h"
-
+#include "PathResolver.h"
 
 
 WaitForInputSceneRenderer::WaitForInputSceneRenderer()
 {
 	initialiseShader();
-	m_ReadyScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/player_ready.png");
+	m_ReadyScrTexID = GLTextureLoader::LoadTexture(PathResolver::getPathToExe() + "InterfaceImages/player_ready.png");
 }
 
 
@@ -21,10 +21,10 @@ void WaitForInputSceneRenderer::render()
 	m_shader->SetAsCurrent();
 
 	GLuint loct = glGetUniformLocation(m_shader->GetID(), "time");
-	glUniform1f(loct, s_GlobalClock.ElapsedTime() * 1.5);
+	glUniform1f(loct, s_GlobalClock.ElapsedTime() * 1.5f);
 	GLuint locc = glGetUniformLocation(m_shader->GetID(), "col");
-	const float col[] = { 1.0,1.0,1.0 };
-	glUniform3f(locc, 0.41, 0.41, 0);
+	const float col[] = { 1.0f,1.0f,1.0f };
+	glUniform3f(locc, 0.41f, 0.41f, 0.f);
 	glBindTexture(GL_TEXTURE_2D, m_ReadyScrTexID);
 	s_QuadMesh->Draw();
 }

@@ -114,6 +114,9 @@
     <ClInclude Include="PrototypeVideoRenderer.h">
       <Filter>Rendering\Sub\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PathResolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="PrototypeVideoRenderer.cpp">
       <Filter>Rendering\Sub\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathResolver.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

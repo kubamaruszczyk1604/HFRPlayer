@@ -1,11 +1,12 @@
 #include "NoFilesSceneRenderer.h"
 
 #include "GLTextureLoader.h"
+#include "PathResolver.h"
 
 NoFilesSceneRenderer::NoFilesSceneRenderer()
 {
 	initialiseShader();
-	m_NoFilesScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/no_img_found.png");
+	m_NoFilesScrTexID = GLTextureLoader::LoadTexture(PathResolver::getPathToExe() + "InterfaceImages/no_img_found.png");
 }
 
 

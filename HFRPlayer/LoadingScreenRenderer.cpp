@@ -4,6 +4,7 @@
 #include "GLTextureLoader.h"
 #include "FastImgLoader.h"
 #include "Renderer.h"
+#include "PathResolver.h"
 
 #include <iostream>
 
@@ -13,7 +14,7 @@ LoadingScreenRenderer::LoadingScreenRenderer() :
 	m_progress(0)
 {
 	initialiseShader();
-	m_LoadingScrTexID = GLTextureLoader::LoadTexture("InterfaceImages/loading_screen.png");
+	m_LoadingScrTexID = GLTextureLoader::LoadTexture(PathResolver::getPathToExe() + "InterfaceImages/loading_screen.png");
 }
 
 LoadingScreenRenderer::~LoadingScreenRenderer()
@@ -68,7 +69,10 @@ bool LoadingScreenRenderer::LoadSet(const std::string & name, std::vector<GLuint
 	std::cout << "Deleting textures..." << std::endl;
 
 	// free all textures first
-	glDeleteTextures(textureIds->size(), &(*textureIds)[0]);
+	if (textureIds->size())
+	{
+		glDeleteTextures(textureIds->size(), &(*textureIds)[0]);
+	}
 	textureIds->clear();
 
 

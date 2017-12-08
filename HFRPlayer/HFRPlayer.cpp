@@ -2,19 +2,24 @@
 #include "ExperimentSocketManager.h"
 #include "Renderer.h"
 #include "ConfigurationFactory.h"
+#include "PathResolver.h"
+
 #include <exception>
 #include <iostream>
+
 
 #define FULL_SCREEN 0
 
 
 int main(int argc, char** args)
 {
+	PathResolver::initialise(args[0]);
+
 	// find configuration
 	Configuration* conf{ nullptr };
 	if (!ConfigurationFactory::ParseCmdArgs(argc, args, &conf))
 	{
-		if (!ConfigurationFactory::ReadConfig("config.txt", &conf))
+		if (!ConfigurationFactory::ReadConfig(PathResolver::getPathToExe() +  "config.txt", &conf))
 		{
 			std::cout << "no argument or config file provided";
 			return 1;
