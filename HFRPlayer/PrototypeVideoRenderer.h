@@ -19,5 +19,6 @@ public:
 protected:
 	virtual std::string genFragShader() override;
 	int m_halfCurrentIndex;
+	int m_halfPrevIndex;
 };
 

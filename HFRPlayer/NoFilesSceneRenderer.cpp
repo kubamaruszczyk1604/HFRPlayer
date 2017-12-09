@@ -20,10 +20,10 @@ void NoFilesSceneRenderer::render()
 	m_shader->SetAsCurrent();
 
 	GLuint loct = glGetUniformLocation(m_shader->GetID(), "time");
-	glUniform1f(loct, s_GlobalClock.ElapsedTime());
+	glUniform1f(loct, (float)s_GlobalClock.ElapsedTime());
 	GLuint locc = glGetUniformLocation(m_shader->GetID(), "col");
 	const float col[] = { 1.0,1.0,1.0 };
-	glUniform3f(locc, 0.3, 0.3, 0);
+	glUniform3f(locc, 0.3f, 0.3f, 0.f);
 	glBindTexture(GL_TEXTURE_2D, m_NoFilesScrTexID);
 	s_QuadMesh->Draw();
 }

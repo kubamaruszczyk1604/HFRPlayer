@@ -19,7 +19,6 @@
 #include <iostream>
 
 #define PROTOTYPE_MODE 1
-#define GL_ERROR_DEBUG 1
 
 enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer
@@ -77,7 +76,7 @@ public:
 
 	static inline void verifyNoError()
 	{
-#ifdef GL_ERROR_DEBUG
+#ifdef _DEBUG
 		if (GLenum error = glGetError())
 		{
 			std::cout << "OpenGL error: " << error << " - " << glewGetErrorString(error);

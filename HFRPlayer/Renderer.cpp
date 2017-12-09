@@ -137,7 +137,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	if (err != GLEW_OK)
 	{
 		fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-		return -1;
+		return false;
 	}
 	glfwSetKeyCallback(s_GLWindow, Key_callback);
 
@@ -150,13 +150,13 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 #else
 	s_VideoSceneRenderer = new VideoSceneRenderer(&s_Pictures);
 #endif
+	return true;
 }
 
 void Renderer::Run()
 {
 	verifyNoError();
 
-	unsigned sizeCached = s_Pictures.size();
 	s_FpsCountTimer.Start();
 	std::chrono::high_resolution_clock::time_point previousDispTime = std::chrono::high_resolution_clock::now();
 	std::chrono::high_resolution_clock::time_point currTime;
@@ -166,7 +166,7 @@ void Renderer::Run()
 		//render loop
 		if (s_RendererState == RendererState::Playing)
 		{
-			for (int i = 0; i < s_frameRepeatCount; ++i)
+			for (unsigned int i = 0; i < s_frameRepeatCount; ++i)
 			{
 				s_VideoSceneRenderer->render();
 				while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
@@ -189,10 +189,20 @@ void Renderer::Run()
 		}
 		else if(s_RendererState == RendererState::Loading)
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
+			glfwSwapBuffers(s_GLWindow);
 			s_RendererState = s_loadingScreenRenderer->LoadSet(s_Name, &s_Pictures, s_LoadOffset) ? 
 				RendererState::WaitingForUser : RendererState::FailedToLoad;
 			glfwPollEvents();
 			verifyNoError();
+
+			// skip UI window when video consists of a single frame
+			if (s_Pictures.size() == 1)
+			{
+				s_RendererState = RendererState::Playing;
+				s_FpsCountTimer.Start();
+				s_VideoSceneRenderer->reset();
+			}
 		}
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
@@ -222,7 +232,7 @@ void Renderer::RequestBufferSwap()
 Renderer::~Renderer()
 {
 	//clean up
-	glDeleteTextures(s_Pictures.size(), &s_Pictures[0]);
+	glDeleteTextures(static_cast<GLsizei>(s_Pictures.size()), &s_Pictures[0]);
 
 	ISceneRenderer::cleanup();
 	glfwDestroyWindow(s_GLWindow);

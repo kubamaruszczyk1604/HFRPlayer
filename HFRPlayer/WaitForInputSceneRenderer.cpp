@@ -21,7 +21,7 @@ void WaitForInputSceneRenderer::render()
 	m_shader->SetAsCurrent();
 
 	GLuint loct = glGetUniformLocation(m_shader->GetID(), "time");
-	glUniform1f(loct, s_GlobalClock.ElapsedTime() * 1.5f);
+	glUniform1f(loct, (float)s_GlobalClock.ElapsedTime() * 1.5f);
 	GLuint locc = glGetUniformLocation(m_shader->GetID(), "col");
 	const float col[] = { 1.0f,1.0f,1.0f };
 	glUniform3f(locc, 0.41f, 0.41f, 0.f);
