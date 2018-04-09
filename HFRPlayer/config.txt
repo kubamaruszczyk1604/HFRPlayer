@@ -1,4 +1,4 @@
 *** THIS IS HFR CONFIG FILE ***
-NAME C:\Users\gd355\Desktop\vids\battleField\img
-FPS 120
-OFFSET 1
+NAME F:\stimuli\exp6\60Hz\panorama\full_half\img
+FPS 60
+OFFSET 0

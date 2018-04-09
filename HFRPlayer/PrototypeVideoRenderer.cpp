@@ -8,10 +8,10 @@
 #define TWO_SPLIT_NARROW 3
 #define TWO_SPLIT_VERTICAL 4
 
-#define SPLIT_TYPE TWO_SPLIT_VERTICAL
+#define SPLIT_TYPE FOUR_SPLIT
 
 #define SWAP_SIDES 0
-#define VIDEO_MERGE 0
+#define VIDEO_MERGE 1
 
 
 PrototypeVideoRenderer::PrototypeVideoRenderer(std::vector<GLuint>* images) :

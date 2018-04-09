@@ -18,7 +18,14 @@
 
 #include <iostream>
 
-#define PROTOTYPE_MODE 1
+#define PROTOTYPE_NONE 0
+#define PROTOTYPE_VIDEO 1
+#define PROTOYPE_PANORAMA 2
+
+#define PROTOTYPE_MODE PROTOTYPE_NONE
+
+
+#define GSYNC_ENABLED 0
 
 enum class RendererState { Playing = 0, Loading = 1, WaitingForUser = 2, FailedToLoad = 3 };
 class Renderer

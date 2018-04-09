@@ -9,15 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
-    <Filter Include="Networking">
-      <UniqueIdentifier>{29dd1f56-74e2-4e40-81d1-07d3b061af85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Networking\Header Files">
-      <UniqueIdentifier>{341f84fb-6d6f-427f-952c-1fb07144d714}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Networking\Source Files">
-      <UniqueIdentifier>{0a24d97d-6cdf-41f4-b108-ce2e3204eb3e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Config">
       <UniqueIdentifier>{33ccb247-662c-43dc-9e50-a9cab2c01649}</UniqueIdentifier>
     </Filter>
@@ -27,17 +18,26 @@
     <Filter Include="Config\Source Files">
       <UniqueIdentifier>{4a5671b9-1885-4697-b413-7d7fb037a0bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering">
+    <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{66a82ed5-d0dd-4916-8f6f-5c7ea0cde057}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\Sub">
+    <Filter Include="Source Files\Rendering\Sub">
       <UniqueIdentifier>{4a91dc0f-2d35-46f4-9a6b-837a4dd14f5d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\Sub\Header Files">
+    <Filter Include="Source Files\Rendering\Sub\Header Files">
       <UniqueIdentifier>{e8a65e9d-6ccd-4b5f-98b2-fd7606d87429}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Rendering\Sub\Source Files">
+    <Filter Include="Source Files\Rendering\Sub\Source Files">
       <UniqueIdentifier>{5ace0e26-36e5-4365-b61d-45f730ac9545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking">
+      <UniqueIdentifier>{29dd1f56-74e2-4e40-81d1-07d3b061af85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking\Header Files">
+      <UniqueIdentifier>{341f84fb-6d6f-427f-952c-1fb07144d714}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Networking\Source Files">
+      <UniqueIdentifier>{0a24d97d-6cdf-41f4-b108-ce2e3204eb3e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -76,13 +76,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SocketConnection.h">
-      <Filter>Networking\Header Files</Filter>
+      <Filter>Source Files\Networking\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExperimentSocketStream.h">
-      <Filter>Networking\Header Files</Filter>
+      <Filter>Source Files\Networking\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExperimentSocketManager.h">
-      <Filter>Networking\Header Files</Filter>
+      <Filter>Source Files\Networking\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Configuration.h">
       <Filter>Config\Header Files</Filter>
@@ -91,37 +91,37 @@
       <Filter>Config\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISceneRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScreenRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WaitForInputSceneRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NoFilesSceneRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VideoSceneRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IVideoSceneRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Rendering</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="PrototypeVideoRenderer.h">
-      <Filter>Rendering\Sub\Header Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PathResolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PanoramaVideoRenderer.h">
+      <Filter>Source Files\Rendering\Sub\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="HFRPlayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -144,40 +144,44 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SocketConnection.cpp">
-      <Filter>Networking\Source Files</Filter>
+      <Filter>Source Files\Networking\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExperimentSocketStream.cpp">
-      <Filter>Networking\Source Files</Filter>
+      <Filter>Source Files\Networking\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ExperimentSocketManager.cpp">
-      <Filter>Networking\Source Files</Filter>
+      <Filter>Source Files\Networking\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ConfigurationFactory.cpp">
       <Filter>Config\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ISceneRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoadingScreenRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WaitForInputSceneRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NoFilesSceneRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VideoSceneRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Rendering</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="PrototypeVideoRenderer.cpp">
-      <Filter>Rendering\Sub\Source Files</Filter>
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PathResolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PanoramaVideoRenderer.cpp">
+      <Filter>Source Files\Rendering\Sub\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
 </Project>

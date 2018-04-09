@@ -7,10 +7,12 @@
 #include "VideoSceneRenderer.h"
 #include "WaitForInputSceneRenderer.h"
 #include "PrototypeVideoRenderer.h"
+#include "PanoramaVideoRenderer.h"
 
 #include <iostream>
 #include <chrono>
 #include <thread>
+
 
 
 GLFWwindow* Renderer::s_GLWindow{ nullptr };
@@ -35,8 +37,7 @@ ISceneRenderer*  Renderer::s_waitForInputRenderer = nullptr;
 
 void Renderer::Error_callback(int error, const char * description)
 {
-	fputs(description, stderr);
-	_fgetchar();
+	std::cout << "GLFW Error: " << description << std::endl;
 }
 
 void Renderer::Key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -94,16 +95,25 @@ void Renderer::LoadTextures(const std::string & name, int offset, Networking::Ex
 
 void Renderer::SetFPS(float fps)
 {
-	std::cout << "setting fps " << fps << std::endl;
-
 	// round down to the nearest integer
 	int aFps = (int)fps;
 
+#if GSYNC_ENABLED
+	std::cout << "setting fps with GSync" << fps << std::endl;
 	// assume max refresh rate of 165. TODO: should this come from a config as well?
 	s_frameRepeatCount = 165 / aFps;
 	aFps = aFps * s_frameRepeatCount;
 	s_TargetFrameTime = 1000000000L / aFps;
+#else
+	std::cout << "setting fps with native refresh rate to " << fps << "." << std::endl;
+	glfwSetWindowMonitor(s_GLWindow, glfwGetPrimaryMonitor(), 0, 0, 2560, 1440, aFps);
+	glfwSwapInterval(1);
+	glfwPollEvents();
+	s_frameRepeatCount = 1;
+	s_TargetFrameTime = 0;
+#endif
 }
+
 
 bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 {
@@ -114,6 +124,7 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 
 	if (!glfwInit()) { return false; }
 
+	//glfwWindowHint(GLFW_REFRESH_RATE, 165);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -145,8 +156,10 @@ bool Renderer::Init(int w, int h, std::string title, bool fullScreen)
 	s_loadingScreenRenderer = new LoadingScreenRenderer();
 	s_noFilesRenderer = new NoFilesSceneRenderer();
 	s_waitForInputRenderer = new WaitForInputSceneRenderer();
-#if PROTOTYPE_MODE
+#if PROTOTYPE_MODE == PROTOTYPE_VIDEO
 	s_VideoSceneRenderer = new PrototypeVideoRenderer(&s_Pictures);
+#elif PROTOTYPE_MODE == PROTOYPE_PANORAMA 
+	s_VideoSceneRenderer = new PanoramaVideoRenderer(&s_Pictures);
 #else
 	s_VideoSceneRenderer = new VideoSceneRenderer(&s_Pictures);
 #endif
@@ -207,12 +220,20 @@ void Renderer::Run()
 		else if (s_RendererState == RendererState::WaitingForUser)
 		{
 			s_waitForInputRenderer->render();
+			while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
+			{
+			}
+			previousDispTime = currTime;
 			glfwSwapBuffers(s_GLWindow);
 			glfwPollEvents();
 		}
 		else if (s_RendererState == RendererState::FailedToLoad)
 		{
 			s_noFilesRenderer->render();
+			while (currTime = std::chrono::high_resolution_clock::now(), std::chrono::duration<uint64_t, std::nano>((currTime - previousDispTime).count()).count() < s_TargetFrameTime)
+			{
+			}
+			previousDispTime = currTime;
 			glfwSwapBuffers(s_GLWindow);
 			glfwPollEvents();
 		}
